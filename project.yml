@@ -1,0 +1,68 @@
+name: TwitchChatFlow
+
+options:
+  bundleIdPrefix: com.takekikuch
+  deploymentTarget:
+    iOS: "15.0"
+
+settings:
+  DEVELOPMENT_TEAM: "" # 空のままでOK、後でXcodeで設定
+
+targets:
+  TwitchChatFlow:
+    type: application
+    platform: iOS
+    sources:
+      - path: TwitchChatFlow/App
+    info:
+      path: TwitchChatFlow/App/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.takekikuch.TwitchChatFlow
+        TARGETED_DEVICE_FAMILY: 1,2 # iPhone and iPad
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    dependencies:
+      - target: TwitchChatFlow Extension
+
+  TwitchChatFlow Extension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TwitchChatFlow/Extension
+        excludes:
+          - "Resources/**"
+    resources:
+      - path: TwitchChatFlow/Extension/Resources
+      - path: TwitchChatFlow/Extension/manifest.json
+      - path: TwitchChatFlow/Extension/app.js
+      - path: TwitchChatFlow/Extension/default.js
+      - path: TwitchChatFlow/Extension/app.css
+    info:
+      path: TwitchChatFlow/Extension/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.Safari.web-extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).SafariWebExtensionHandler
+          SFSafariWebsiteAccess:
+            Level: Some
+            "Allowed Domains":
+              - twitch.tv
+              - "*.twitch.tv"
+        NSHumanReadableCopyright: "Copyright © 2025 Twitch Chat Flow. All rights reserved."
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.takekikuch.TwitchChatFlow.Extension
+        TARGETED_DEVICE_FAMILY: 1,2
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+        SKIP_INSTALL: true
+
+schemes:
+  TwitchChatFlow:
+    build:
+      targets:
+        TwitchChatFlow: all
+        TwitchChatFlow Extension: all
+    run:
+      config: Debug
+    archive:
+      config: Release

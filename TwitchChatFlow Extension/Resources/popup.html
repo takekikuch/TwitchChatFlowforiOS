@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Chat Flow</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            width: 300px;
+            background-color: #f5f5f7;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+        
+        .header p {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #007AFF;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        
+        .status.enabled {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.disabled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .link a {
+            color: #007AFF;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        
+        /* スライダーのスタイル */
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #007AFF;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #007AFF;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+            margin-top: -5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Twitch Chat Flow</h1>
+        <p>ニコニコ動画風コメント表示</p>
+    </div>
+    
+    <div class="control-group">
+        <label for="enableToggle">弾幕表示を有効にする</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="enableToggle" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+    
+    <div class="control-group">
+        <label for="fontSizeSlider">文字サイズ: <span id="fontSizeValue">24</span>px</label>
+        <input type="range" id="fontSizeSlider" min="12" max="48" value="24" step="2">
+        <div class="slider-labels">
+            <span>小</span>
+            <span>大</span>
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <label for="durationSlider">表示時間: <span id="durationValue">7</span>秒</label>
+        <input type="range" id="durationSlider" min="3" max="15" value="7" step="1">
+        <div class="slider-labels">
+            <span>短</span>
+            <span>長</span>
+        </div>
+    </div>
+    
+    <div class="status enabled" id="status">
+        弾幕表示が有効です
+    </div>
+    
+    <div class="link">
+        <a href="https://www.twitch.tv" target="_blank">Twitchを開く</a>
+    </div>
+    
+    <script>
+        console.log('🎨 Popup loaded');
+        const enableToggle = document.getElementById('enableToggle');
+        const status = document.getElementById('status');
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        const fontSizeValue = document.getElementById('fontSizeValue');
+        const durationSlider = document.getElementById('durationSlider');
+        const durationValue = document.getElementById('durationValue');
+        
+        // デフォルト設定
+        let settings = {
+            enabled: true,
+            fontSize: 24,
+            duration: 7,
+            opacity: 1,
+            danmakuDensity: 2
+        };
+        
+        // 設定の読み込み
+        function loadSettings() {
+            try {
+                const savedEnabled = localStorage.getItem('twitchChatFlowEnabled');
+                const savedFontSize = localStorage.getItem('twitchChatFlowFontSize');
+                const savedDuration = localStorage.getItem('twitchChatFlowDuration');
+                
+                if (savedEnabled !== null) settings.enabled = JSON.parse(savedEnabled);
+                if (savedFontSize !== null) settings.fontSize = JSON.parse(savedFontSize);
+                if (savedDuration !== null) settings.duration = JSON.parse(savedDuration);
+                
+                console.log('📖 Settings loaded:', settings);
+            } catch (error) {
+                console.log('📝 Using default settings');
+            }
+            
+            // UIを更新
+            enableToggle.checked = settings.enabled;
+            fontSizeSlider.value = settings.fontSize;
+            fontSizeValue.textContent = settings.fontSize;
+            durationSlider.value = settings.duration;
+            durationValue.textContent = settings.duration;
+            updateStatus(settings.enabled);
+        }
+        
+        // 設定の保存
+        function saveSettings() {
+            try {
+                localStorage.setItem('twitchChatFlowEnabled', JSON.stringify(settings.enabled));
+                localStorage.setItem('twitchChatFlowFontSize', JSON.stringify(settings.fontSize));
+                localStorage.setItem('twitchChatFlowDuration', JSON.stringify(settings.duration));
+                console.log('💾 Settings saved:', settings);
+                
+                // コンテンツスクリプトに設定変更を通知（postMessage使用）
+                notifyContentScripts();
+            } catch (error) {
+                console.error('❌ Failed to save settings:', error);
+            }
+        }
+        
+        // コンテンツスクリプトに設定変更を通知
+        function notifyContentScripts() {
+            // storage eventが発火されるように、storageを再設定
+            const timestamp = Date.now();
+            localStorage.setItem('twitchChatFlowLastUpdate', JSON.stringify(timestamp));
+        }
+        
+        // イベントリスナーの設定
+        enableToggle.addEventListener('change', () => {
+            settings.enabled = enableToggle.checked;
+            updateStatus(settings.enabled);
+            saveSettings();
+        });
+        
+        fontSizeSlider.addEventListener('input', () => {
+            settings.fontSize = parseInt(fontSizeSlider.value);
+            fontSizeValue.textContent = settings.fontSize;
+            saveSettings();
+        });
+        
+        durationSlider.addEventListener('input', () => {
+            settings.duration = parseInt(durationSlider.value);
+            durationValue.textContent = settings.duration;
+            saveSettings();
+        });
+        
+        function updateStatus(enabled) {
+            if (enabled) {
+                status.textContent = '弾幕表示が有効です';
+                status.className = 'status enabled';
+            } else {
+                status.textContent = '弾幕表示が無効です';
+                status.className = 'status disabled';
+            }
+        }
+        
+        // 初期化
+        loadSettings();
+        console.log('✅ Popup initialized');
+    </script>
+</body>
+</html>

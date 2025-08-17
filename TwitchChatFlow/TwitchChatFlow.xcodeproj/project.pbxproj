@@ -1,0 +1,762 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		49B88CF12E4F958A0023FD3E /* TwitchChatFlow Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 49B88CF02E4F958A0023FD3E /* TwitchChatFlow Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		49B88CDB2E4F958A0023FD3E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49B88CB52E4F95880023FD3E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49B88CBC2E4F95880023FD3E;
+			remoteInfo = TwitchChatFlow;
+		};
+		49B88CE52E4F958A0023FD3E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49B88CB52E4F95880023FD3E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49B88CBC2E4F95880023FD3E;
+			remoteInfo = TwitchChatFlow;
+		};
+		49B88CF22E4F958A0023FD3E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49B88CB52E4F95880023FD3E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49B88CEF2E4F958A0023FD3E;
+			remoteInfo = "TwitchChatFlow Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		49B88D0F2E4F958A0023FD3E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				49B88CF12E4F958A0023FD3E /* TwitchChatFlow Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		49B88CBD2E4F95880023FD3E /* TwitchChatFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwitchChatFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		49B88CDA2E4F958A0023FD3E /* TwitchChatFlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TwitchChatFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		49B88CE42E4F958A0023FD3E /* TwitchChatFlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TwitchChatFlowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		49B88CF02E4F958A0023FD3E /* TwitchChatFlow Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TwitchChatFlow Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		49B88D0A2E4F958A0023FD3E /* Exceptions for "TwitchChatFlow" folder in "TwitchChatFlow" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 49B88CBC2E4F95880023FD3E /* TwitchChatFlow */;
+		};
+		49B88D0E2E4F958A0023FD3E /* Exceptions for "TwitchChatFlow Extension" folder in "TwitchChatFlow Extension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 49B88CEF2E4F958A0023FD3E /* TwitchChatFlow Extension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		49B88CBF2E4F95880023FD3E /* TwitchChatFlow */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				49B88D0A2E4F958A0023FD3E /* Exceptions for "TwitchChatFlow" folder in "TwitchChatFlow" target */,
+			);
+			path = TwitchChatFlow;
+			sourceTree = "<group>";
+		};
+		49B88CDD2E4F958A0023FD3E /* TwitchChatFlowTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TwitchChatFlowTests;
+			sourceTree = "<group>";
+		};
+		49B88CE72E4F958A0023FD3E /* TwitchChatFlowUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TwitchChatFlowUITests;
+			sourceTree = "<group>";
+		};
+		49B88CF42E4F958A0023FD3E /* TwitchChatFlow Extension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				49B88D0E2E4F958A0023FD3E /* Exceptions for "TwitchChatFlow Extension" folder in "TwitchChatFlow Extension" target */,
+			);
+			explicitFolders = (
+				Resources/_locales,
+				Resources/images,
+			);
+			path = "TwitchChatFlow Extension";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		49B88CBA2E4F95880023FD3E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CD72E4F958A0023FD3E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CE12E4F958A0023FD3E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CED2E4F958A0023FD3E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		49B88CB42E4F95880023FD3E = {
+			isa = PBXGroup;
+			children = (
+				49B88CBF2E4F95880023FD3E /* TwitchChatFlow */,
+				49B88CDD2E4F958A0023FD3E /* TwitchChatFlowTests */,
+				49B88CE72E4F958A0023FD3E /* TwitchChatFlowUITests */,
+				49B88CF42E4F958A0023FD3E /* TwitchChatFlow Extension */,
+				49B88CBE2E4F95880023FD3E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		49B88CBE2E4F95880023FD3E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				49B88CBD2E4F95880023FD3E /* TwitchChatFlow.app */,
+				49B88CDA2E4F958A0023FD3E /* TwitchChatFlowTests.xctest */,
+				49B88CE42E4F958A0023FD3E /* TwitchChatFlowUITests.xctest */,
+				49B88CF02E4F958A0023FD3E /* TwitchChatFlow Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		49B88CBC2E4F95880023FD3E /* TwitchChatFlow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49B88D102E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlow" */;
+			buildPhases = (
+				49B88CB92E4F95880023FD3E /* Sources */,
+				49B88CBA2E4F95880023FD3E /* Frameworks */,
+				49B88CBB2E4F95880023FD3E /* Resources */,
+				49B88D0F2E4F958A0023FD3E /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49B88CF32E4F958A0023FD3E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				49B88CBF2E4F95880023FD3E /* TwitchChatFlow */,
+			);
+			name = TwitchChatFlow;
+			packageProductDependencies = (
+			);
+			productName = TwitchChatFlow;
+			productReference = 49B88CBD2E4F95880023FD3E /* TwitchChatFlow.app */;
+			productType = "com.apple.product-type.application";
+		};
+		49B88CD92E4F958A0023FD3E /* TwitchChatFlowTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49B88D152E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlowTests" */;
+			buildPhases = (
+				49B88CD62E4F958A0023FD3E /* Sources */,
+				49B88CD72E4F958A0023FD3E /* Frameworks */,
+				49B88CD82E4F958A0023FD3E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49B88CDC2E4F958A0023FD3E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				49B88CDD2E4F958A0023FD3E /* TwitchChatFlowTests */,
+			);
+			name = TwitchChatFlowTests;
+			packageProductDependencies = (
+			);
+			productName = TwitchChatFlowTests;
+			productReference = 49B88CDA2E4F958A0023FD3E /* TwitchChatFlowTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		49B88CE32E4F958A0023FD3E /* TwitchChatFlowUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49B88D182E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlowUITests" */;
+			buildPhases = (
+				49B88CE02E4F958A0023FD3E /* Sources */,
+				49B88CE12E4F958A0023FD3E /* Frameworks */,
+				49B88CE22E4F958A0023FD3E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49B88CE62E4F958A0023FD3E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				49B88CE72E4F958A0023FD3E /* TwitchChatFlowUITests */,
+			);
+			name = TwitchChatFlowUITests;
+			packageProductDependencies = (
+			);
+			productName = TwitchChatFlowUITests;
+			productReference = 49B88CE42E4F958A0023FD3E /* TwitchChatFlowUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		49B88CEF2E4F958A0023FD3E /* TwitchChatFlow Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49B88D0B2E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlow Extension" */;
+			buildPhases = (
+				49B88CEC2E4F958A0023FD3E /* Sources */,
+				49B88CED2E4F958A0023FD3E /* Frameworks */,
+				49B88CEE2E4F958A0023FD3E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				49B88CF42E4F958A0023FD3E /* TwitchChatFlow Extension */,
+			);
+			name = "TwitchChatFlow Extension";
+			packageProductDependencies = (
+			);
+			productName = "TwitchChatFlow Extension";
+			productReference = 49B88CF02E4F958A0023FD3E /* TwitchChatFlow Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		49B88CB52E4F95880023FD3E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					49B88CBC2E4F95880023FD3E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					49B88CD92E4F958A0023FD3E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 49B88CBC2E4F95880023FD3E;
+					};
+					49B88CE32E4F958A0023FD3E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 49B88CBC2E4F95880023FD3E;
+					};
+					49B88CEF2E4F958A0023FD3E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = 49B88CB82E4F95880023FD3E /* Build configuration list for PBXProject "TwitchChatFlow" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 49B88CB42E4F95880023FD3E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 49B88CBE2E4F95880023FD3E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				49B88CBC2E4F95880023FD3E /* TwitchChatFlow */,
+				49B88CD92E4F958A0023FD3E /* TwitchChatFlowTests */,
+				49B88CE32E4F958A0023FD3E /* TwitchChatFlowUITests */,
+				49B88CEF2E4F958A0023FD3E /* TwitchChatFlow Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		49B88CBB2E4F95880023FD3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CD82E4F958A0023FD3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CE22E4F958A0023FD3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CEE2E4F958A0023FD3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		49B88CB92E4F95880023FD3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CD62E4F958A0023FD3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CE02E4F958A0023FD3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		49B88CEC2E4F958A0023FD3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		49B88CDC2E4F958A0023FD3E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49B88CBC2E4F95880023FD3E /* TwitchChatFlow */;
+			targetProxy = 49B88CDB2E4F958A0023FD3E /* PBXContainerItemProxy */;
+		};
+		49B88CE62E4F958A0023FD3E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49B88CBC2E4F95880023FD3E /* TwitchChatFlow */;
+			targetProxy = 49B88CE52E4F958A0023FD3E /* PBXContainerItemProxy */;
+		};
+		49B88CF32E4F958A0023FD3E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 49B88CEF2E4F958A0023FD3E /* TwitchChatFlow Extension */;
+			targetProxy = 49B88CF22E4F958A0023FD3E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		49B88D0C2E4F958A0023FD3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TwitchChatFlow Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TwitchChatFlow Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlow.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		49B88D0D2E4F958A0023FD3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TwitchChatFlow Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TwitchChatFlow Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlow.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		49B88D112E4F958A0023FD3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TwitchChatFlow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TwitchChatFlow;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlow;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		49B88D122E4F958A0023FD3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TwitchChatFlow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TwitchChatFlow;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlow;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		49B88D132E4F958A0023FD3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		49B88D142E4F958A0023FD3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		49B88D162E4F958A0023FD3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TwitchChatFlow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TwitchChatFlow";
+			};
+			name = Debug;
+		};
+		49B88D172E4F958A0023FD3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TwitchChatFlow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TwitchChatFlow";
+			};
+			name = Release;
+		};
+		49B88D192E4F958A0023FD3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlowUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TwitchChatFlow;
+			};
+			name = Debug;
+		};
+		49B88D1A2E4F958A0023FD3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MDH8A45XTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.takekikuch.TwitchChatFlow.TwitchChatFlowUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TwitchChatFlow;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		49B88CB82E4F95880023FD3E /* Build configuration list for PBXProject "TwitchChatFlow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B88D132E4F958A0023FD3E /* Debug */,
+				49B88D142E4F958A0023FD3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49B88D0B2E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlow Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B88D0C2E4F958A0023FD3E /* Debug */,
+				49B88D0D2E4F958A0023FD3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49B88D102E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B88D112E4F958A0023FD3E /* Debug */,
+				49B88D122E4F958A0023FD3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49B88D152E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlowTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B88D162E4F958A0023FD3E /* Debug */,
+				49B88D172E4F958A0023FD3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		49B88D182E4F958A0023FD3E /* Build configuration list for PBXNativeTarget "TwitchChatFlowUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B88D192E4F958A0023FD3E /* Debug */,
+				49B88D1A2E4F958A0023FD3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 49B88CB52E4F95880023FD3E /* Project object */;
+}

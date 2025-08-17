@@ -187,6 +187,24 @@
         </div>
     </div>
     
+    <div class="control-group">
+        <label for="shadowOpacitySlider">文字影の透明度: <span id="shadowOpacityValue">80</span>%</label>
+        <input type="range" id="shadowOpacitySlider" min="0" max="100" value="80" step="5">
+        <div class="slider-labels">
+            <span>透明</span>
+            <span>濃い</span>
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <label for="textOpacitySlider">文字の透明度: <span id="textOpacityValue">100</span>%</label>
+        <input type="range" id="textOpacitySlider" min="10" max="100" value="100" step="5">
+        <div class="slider-labels">
+            <span>薄い</span>
+            <span>濃い</span>
+        </div>
+    </div>
+    
     <div class="status enabled" id="status">
         弾幕表示が有効です
     </div>
@@ -203,6 +221,10 @@
         const fontSizeValue = document.getElementById('fontSizeValue');
         const durationSlider = document.getElementById('durationSlider');
         const durationValue = document.getElementById('durationValue');
+        const shadowOpacitySlider = document.getElementById('shadowOpacitySlider');
+        const shadowOpacityValue = document.getElementById('shadowOpacityValue');
+        const textOpacitySlider = document.getElementById('textOpacitySlider');
+        const textOpacityValue = document.getElementById('textOpacityValue');
         
         // デフォルト設定
         let settings = {
@@ -210,7 +232,9 @@
             fontSize: 24,
             duration: 7,
             opacity: 1,
-            danmakuDensity: 2
+            danmakuDensity: 2,
+            shadowOpacity: 0.8,
+            textOpacity: 1.0
         };
         
         // 設定の読み込み（browser.storage使用）
@@ -221,7 +245,9 @@
                 const result = await browser.storage.local.get({
                     twitchChatFlowEnabled: true,
                     twitchChatFlowFontSize: 24,
-                    twitchChatFlowDuration: 7
+                    twitchChatFlowDuration: 7,
+                    twitchChatFlowShadowOpacity: 0.8,
+                    twitchChatFlowTextOpacity: 1.0
                 });
                 
                 console.log('🔍 Raw storage result:', result);
@@ -229,6 +255,8 @@
                 settings.enabled = result.twitchChatFlowEnabled;
                 settings.fontSize = result.twitchChatFlowFontSize;
                 settings.duration = result.twitchChatFlowDuration;
+                settings.shadowOpacity = result.twitchChatFlowShadowOpacity;
+                settings.textOpacity = result.twitchChatFlowTextOpacity;
                 
                 console.log('📖 Settings loaded from browser.storage:', settings);
                 console.log('📖 Enabled:', settings.enabled, 'FontSize:', settings.fontSize, 'Duration:', settings.duration);
@@ -243,6 +271,10 @@
             fontSizeValue.textContent = settings.fontSize;
             durationSlider.value = settings.duration;
             durationValue.textContent = settings.duration;
+            shadowOpacitySlider.value = Math.round(settings.shadowOpacity * 100);
+            shadowOpacityValue.textContent = Math.round(settings.shadowOpacity * 100);
+            textOpacitySlider.value = Math.round(settings.textOpacity * 100);
+            textOpacityValue.textContent = Math.round(settings.textOpacity * 100);
             updateStatus(settings.enabled);
         }
         
@@ -253,7 +285,9 @@
                 const dataToSave = {
                     twitchChatFlowEnabled: settings.enabled,
                     twitchChatFlowFontSize: settings.fontSize,
-                    twitchChatFlowDuration: settings.duration
+                    twitchChatFlowDuration: settings.duration,
+                    twitchChatFlowShadowOpacity: settings.shadowOpacity,
+                    twitchChatFlowTextOpacity: settings.textOpacity
                 };
                 console.log('💾 Data to save:', dataToSave);
                 
@@ -261,7 +295,7 @@
                 console.log('✅ Settings saved to browser.storage successfully');
                 
                 // 保存後に確認読み取り
-                const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration']);
+                const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration', 'twitchChatFlowShadowOpacity', 'twitchChatFlowTextOpacity']);
                 console.log('🔍 Verification read:', verification);
                 
                 // アクティブタブのコンテンツスクリプトに設定変更を通知
@@ -316,6 +350,22 @@
             console.log('🔄 Duration changed to:', newDuration);
             settings.duration = newDuration;
             durationValue.textContent = settings.duration;
+            await saveSettings();
+        });
+        
+        shadowOpacitySlider.addEventListener('input', async () => {
+            const newOpacity = parseInt(shadowOpacitySlider.value) / 100;
+            console.log('🔄 Shadow opacity changed to:', newOpacity);
+            settings.shadowOpacity = newOpacity;
+            shadowOpacityValue.textContent = Math.round(newOpacity * 100);
+            await saveSettings();
+        });
+        
+        textOpacitySlider.addEventListener('input', async () => {
+            const newOpacity = parseInt(textOpacitySlider.value) / 100;
+            console.log('🔄 Text opacity changed to:', newOpacity);
+            settings.textOpacity = newOpacity;
+            textOpacityValue.textContent = Math.round(newOpacity * 100);
             await saveSettings();
         });
         

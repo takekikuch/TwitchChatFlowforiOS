@@ -120,12 +120,6 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 			settings = userSettings;
 			applyUserSettings();
 			console.log('🎯 Danmaku container initialized:', $container);
-			
-			// 一時的にコンテナを視覚化（デバッグ用）
-			$container.style.border = '3px solid red';
-			setTimeout(() => {
-				$container.style.border = 'none';
-			}, 5000);
 		},
 
 		onSettingsChange(userSettings) {
@@ -160,33 +154,14 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 			$messageContainer.appendChild($message);
 			$chat.appendChild($messageContainer);
 
-			// 一時的にanimationend削除を無効化（デバッグ用）
-			// $chat.addEventListener('animationend', () => $chat.remove());
-			console.log('🚫 Animation removal disabled for debugging');
+			// アニメーション終了時に要素を削除
+			$chat.addEventListener('animationend', () => $chat.remove());
 
 			const stack = getProperStack($chat) || 0;
 			console.log('🎨 Creating danmaku element, stack:', stack);
 			console.log('🎨 Danmaku element:', $chat);
 
 			$container.appendChild($chat);
-			console.log('✅ Danmaku element added to container!');
-			
-			// コンテナとチャット要素の詳細情報をログに出力
-			console.log('📏 Container info:', {
-				width: $container.offsetWidth,
-				height: $container.offsetHeight,
-				position: getComputedStyle($container).position,
-				zIndex: getComputedStyle($container).zIndex,
-				overflow: getComputedStyle($container).overflow
-			});
-			console.log('📏 Chat element info:', {
-				width: $chat.offsetWidth,
-				height: $chat.offsetHeight,
-				top: $chat.offsetTop,
-				left: $chat.offsetLeft,
-				animation: getComputedStyle($chat).animation,
-				transform: getComputedStyle($chat).transform
-			});
 
 			setTimeout(() => {
 				let length = $message.getBoundingClientRect().width / $container.getBoundingClientRect().width || 0;

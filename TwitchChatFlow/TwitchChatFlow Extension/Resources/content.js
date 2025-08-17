@@ -9,7 +9,9 @@
 		fontSize: 24,
 		duration: 7,
 		opacity: 1,
-		danmakuDensity: 2
+		danmakuDensity: 2,
+		shadowOpacity: 0.8,
+		textOpacity: 1.0
 	};
 	let core;
 	
@@ -61,19 +63,25 @@
 		let settings = {
 			enabled: true,
 			fontSize: 24,
-			duration: 7
+			duration: 7,
+			shadowOpacity: 0.8,
+			textOpacity: 1.0
 		};
 		
 		try {
 			const result = await browser.storage.local.get({
 				twitchChatFlowEnabled: true,
 				twitchChatFlowFontSize: 24,
-				twitchChatFlowDuration: 7
+				twitchChatFlowDuration: 7,
+				twitchChatFlowShadowOpacity: 0.8,
+				twitchChatFlowTextOpacity: 1.0
 			});
 			
 			settings.enabled = result.twitchChatFlowEnabled;
 			settings.fontSize = result.twitchChatFlowFontSize;
 			settings.duration = result.twitchChatFlowDuration;
+			settings.shadowOpacity = result.twitchChatFlowShadowOpacity;
+			settings.textOpacity = result.twitchChatFlowTextOpacity;
 			console.log('📖 Settings loaded from browser.storage for popup:', settings);
 		} catch (error) {
 			console.log('📝 Using default settings for global popup:', error);
@@ -133,7 +141,7 @@
 				</div>
 			</div>
 			
-			<div style="margin-bottom: 25px;">
+			<div style="margin-bottom: 20px;">
 				<label style="color: white; font-size: 14px; display: block; margin-bottom: 10px;">
 					表示時間: <span id="tcf-global-duration-value">${settings.duration}</span>秒
 				</label>
@@ -141,6 +149,28 @@
 					   style="width: 100%; height: 8px; border-radius: 4px; background: #464649; outline: none; -webkit-appearance: none;">
 				<div style="display: flex; justify-content: space-between; font-size: 12px; color: #a0a0a3; margin-top: 5px;">
 					<span>短</span><span>長</span>
+				</div>
+			</div>
+			
+			<div style="margin-bottom: 20px;">
+				<label style="color: white; font-size: 14px; display: block; margin-bottom: 10px;">
+					文字影の透明度: <span id="tcf-global-shadow-opacity-value">${Math.round(settings.shadowOpacity * 100)}</span>%
+				</label>
+				<input type="range" id="tcf-global-shadow-opacity-slider" min="0" max="100" value="${Math.round(settings.shadowOpacity * 100)}" step="5"
+					   style="width: 100%; height: 8px; border-radius: 4px; background: #464649; outline: none; -webkit-appearance: none;">
+				<div style="display: flex; justify-content: space-between; font-size: 12px; color: #a0a0a3; margin-top: 5px;">
+					<span>透明</span><span>濃い</span>
+				</div>
+			</div>
+			
+			<div style="margin-bottom: 25px;">
+				<label style="color: white; font-size: 14px; display: block; margin-bottom: 10px;">
+					文字の透明度: <span id="tcf-global-text-opacity-value">${Math.round(settings.textOpacity * 100)}</span>%
+				</label>
+				<input type="range" id="tcf-global-text-opacity-slider" min="10" max="100" value="${Math.round(settings.textOpacity * 100)}" step="5"
+					   style="width: 100%; height: 8px; border-radius: 4px; background: #464649; outline: none; -webkit-appearance: none;">
+				<div style="display: flex; justify-content: space-between; font-size: 12px; color: #a0a0a3; margin-top: 5px;">
+					<span>薄い</span><span>濃い</span>
 				</div>
 			</div>
 			
@@ -181,6 +211,10 @@
 		const fontSizeValue = popup.querySelector('#tcf-global-font-size-value');
 		const durationSlider = popup.querySelector('#tcf-global-duration-slider');
 		const durationValue = popup.querySelector('#tcf-global-duration-value');
+		const shadowOpacitySlider = popup.querySelector('#tcf-global-shadow-opacity-slider');
+		const shadowOpacityValue = popup.querySelector('#tcf-global-shadow-opacity-value');
+		const textOpacitySlider = popup.querySelector('#tcf-global-text-opacity-slider');
+		const textOpacityValue = popup.querySelector('#tcf-global-text-opacity-value');
 		const closeBtn = popup.querySelector('#tcf-global-close-btn');
 		
 		const saveSettings = async () => {
@@ -188,7 +222,9 @@
 				await browser.storage.local.set({
 					twitchChatFlowEnabled: settings.enabled,
 					twitchChatFlowFontSize: settings.fontSize,
-					twitchChatFlowDuration: settings.duration
+					twitchChatFlowDuration: settings.duration,
+					twitchChatFlowShadowOpacity: settings.shadowOpacity,
+					twitchChatFlowTextOpacity: settings.textOpacity
 				});
 				console.log('💾 Global settings saved to browser.storage:', settings);
 				
@@ -216,6 +252,18 @@
 		durationSlider.addEventListener('input', async () => {
 			settings.duration = parseInt(durationSlider.value);
 			durationValue.textContent = settings.duration;
+			await saveSettings();
+		});
+		
+		shadowOpacitySlider.addEventListener('input', async () => {
+			settings.shadowOpacity = parseInt(shadowOpacitySlider.value) / 100;
+			shadowOpacityValue.textContent = Math.round(settings.shadowOpacity * 100);
+			await saveSettings();
+		});
+		
+		textOpacitySlider.addEventListener('input', async () => {
+			settings.textOpacity = parseInt(textOpacitySlider.value) / 100;
+			textOpacityValue.textContent = Math.round(settings.textOpacity * 100);
 			await saveSettings();
 		});
 		
@@ -341,12 +389,16 @@
 				const result = await browser.storage.local.get({
 					twitchChatFlowEnabled: true,
 					twitchChatFlowFontSize: 24,
-					twitchChatFlowDuration: 7
+					twitchChatFlowDuration: 7,
+					twitchChatFlowShadowOpacity: 0.8,
+					twitchChatFlowTextOpacity: 1.0
 				});
 				
 				settings.enabled = result.twitchChatFlowEnabled;
 				settings.fontSize = result.twitchChatFlowFontSize;
 				settings.duration = result.twitchChatFlowDuration;
+				settings.shadowOpacity = result.twitchChatFlowShadowOpacity;
+				settings.textOpacity = result.twitchChatFlowTextOpacity;
 				
 				console.log('📖 Settings loaded from browser.storage:', settings);
 				

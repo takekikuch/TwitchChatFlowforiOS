@@ -97,7 +97,6 @@
 				49B88D0E2E4F958A0023FD3E /* Exceptions for "TwitchChatFlow Extension" folder in "TwitchChatFlow Extension" target */,
 			);
 			explicitFolders = (
-				Resources/_locales,
 				Resources/images,
 			);
 			path = "TwitchChatFlow Extension";

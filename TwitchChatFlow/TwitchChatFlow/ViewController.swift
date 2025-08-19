@@ -16,7 +16,9 @@ class ViewController: UIViewController, WKNavigationDelegate, WKScriptMessageHan
         super.viewDidLoad()
 
         self.webView.navigationDelegate = self
-        self.webView.scrollView.isScrollEnabled = false
+        self.webView.scrollView.isScrollEnabled = true
+        self.webView.scrollView.bounces = true
+        self.webView.scrollView.alwaysBounceVertical = true
 
         self.webView.configuration.userContentController.add(self, name: "controller")
 

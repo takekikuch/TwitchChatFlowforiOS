@@ -35,12 +35,14 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 	const calculateMaxStack = () => {
 		if (!settings) return;
 		const { danmakuDensity, fontSize } = settings;
-		const percent = ((+danmakuDensity || 0) + 1) / 4;
+		// 画面全体を使用: 70%〜100%の範囲
+		const percent = 0.7 + ((+danmakuDensity || 0) * 0.1);
 		const lineHeight = fontSize * 1.25;
 		const containerHeight = $container?.offsetHeight || 480;
 		const containerWidth = $container?.offsetWidth || 854;
 		maxStack = Math.max(Math.floor(containerHeight / lineHeight * percent), 1);
 		$container?.style.setProperty('--width', `${containerWidth}px`);
+		console.log('📏 MaxStack calculated:', { danmakuDensity, percent: Math.round(percent * 100) + '%', maxStack });
 	}
 
 	window.addEventListener('resize', calculateMaxStack);
@@ -48,16 +50,26 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 
 	const getProperStack = $chat => {
 		let min = maxStack, currentMin = Infinity;
+		let foundEmptyStack = false;
+		
 		for (let i = 0; i < maxStack; i++) {
 			if (!stacks[i]) {
 				stacks[i] = 0;
 				min = i;
+				foundEmptyStack = true;
 				break;
 			} else if (stacks[i] < currentMin) {
 				min = i;
 				currentMin = stacks[i];
 			}
 		}
+		
+		// 非表示モードで空きスタックがない場合は非表示
+		if (settings?.commentOverflow === 'hide' && !foundEmptyStack) {
+			console.log('🚫 Comment hidden - no available stack (hide mode)');
+			return null;
+		}
+		
 		min = Math.min(min, maxStack);
 		if ($chat) {
 			if (!stacks[min]) {
@@ -75,11 +87,18 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 		if ($container) {
 			calculateMaxStack();
 
-			const { enabled, showUsername, textDecoration, bold, font, danmakuDensity, mode, ...rest } = settings;
+			const { enabled, showUsername, textDecoration, bold, font, danmakuDensity, mode, commentOverflow, ...rest } = settings;
 
 			Object.entries(rest).forEach(([key, value]) => {
 				$container.style.setProperty(`--${key}`, value);
 			});
+
+			// 非表示モードではスタック間隔を詰める
+			if (commentOverflow === 'hide') {
+				$container.style.setProperty('--stack-spacing', '1.1em');
+			} else {
+				$container.style.setProperty('--stack-spacing', '1.25em');
+			}
 
 			if (!enabled || mode !== 'default') {
 				$container.innerHTML = '';
@@ -157,7 +176,11 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 			// アニメーション終了時に要素を削除
 			$chat.addEventListener('animationend', () => $chat.remove());
 
-			const stack = getProperStack($chat) || 0;
+			const stack = getProperStack($chat);
+			if (stack === null) {
+				console.log('🚫 Danmaku hidden due to overflow settings');
+				return;
+			}
 			console.log('🎨 Creating danmaku element, stack:', stack);
 			console.log('🎨 Danmaku element:', $chat);
 

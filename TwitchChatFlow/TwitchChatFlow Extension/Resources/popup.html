@@ -156,6 +156,31 @@
             color: #666;
             margin-top: -5px;
         }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+        
+        .radio-label {
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -217,6 +242,20 @@
         </div>
     </div>
     
+    <div class="control-group">
+        <label>コメント密度が高い時：</label>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="commentOverflow" value="overlap" id="overflowOverlap" checked>
+                <span class="radio-label">重ねて表示</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="commentOverflow" value="hide" id="overflowHide">
+                <span class="radio-label">非表示</span>
+            </label>
+        </div>
+    </div>
+    
     <div class="status enabled" id="status">
         弾幕表示が有効です
     </div>
@@ -239,6 +278,8 @@
         const textOpacityValue = document.getElementById('textOpacityValue');
         const fontWeightSlider = document.getElementById('fontWeightSlider');
         const fontWeightValue = document.getElementById('fontWeightValue');
+        const overflowOverlap = document.getElementById('overflowOverlap');
+        const overflowHide = document.getElementById('overflowHide');
         
         // デフォルト設定
         let settings = {
@@ -246,10 +287,11 @@
             fontSize: 24,
             duration: 7,
             opacity: 1,
-            danmakuDensity: 2,
+            danmakuDensity: 3,
             shadowOpacity: 0.8,
             textOpacity: 1.0,
-            fontWeight: 400
+            fontWeight: 400,
+            commentOverflow: 'overlap'
         };
         
         // 設定の読み込み（browser.storage使用）
@@ -263,7 +305,8 @@
                     twitchChatFlowDuration: 7,
                     twitchChatFlowShadowOpacity: 0.8,
                     twitchChatFlowTextOpacity: 1.0,
-                    twitchChatFlowFontWeight: 400
+                    twitchChatFlowFontWeight: 400,
+                    twitchChatFlowCommentOverflow: 'overlap'
                 });
                 
                 console.log('🔍 Raw storage result:', result);
@@ -274,6 +317,7 @@
                 settings.shadowOpacity = result.twitchChatFlowShadowOpacity;
                 settings.textOpacity = result.twitchChatFlowTextOpacity;
                 settings.fontWeight = result.twitchChatFlowFontWeight;
+                settings.commentOverflow = result.twitchChatFlowCommentOverflow;
                 
                 console.log('📖 Settings loaded from browser.storage:', settings);
                 console.log('📖 Enabled:', settings.enabled, 'FontSize:', settings.fontSize, 'Duration:', settings.duration);
@@ -294,6 +338,11 @@
             textOpacityValue.textContent = Math.round(settings.textOpacity * 100);
             fontWeightSlider.value = settings.fontWeight;
             fontWeightValue.textContent = settings.fontWeight;
+            if (settings.commentOverflow === 'overlap') {
+                overflowOverlap.checked = true;
+            } else {
+                overflowHide.checked = true;
+            }
             updateStatus(settings.enabled);
         }
         
@@ -307,7 +356,8 @@
                     twitchChatFlowDuration: settings.duration,
                     twitchChatFlowShadowOpacity: settings.shadowOpacity,
                     twitchChatFlowTextOpacity: settings.textOpacity,
-                    twitchChatFlowFontWeight: settings.fontWeight
+                    twitchChatFlowFontWeight: settings.fontWeight,
+                    twitchChatFlowCommentOverflow: settings.commentOverflow
                 };
                 console.log('💾 Data to save:', dataToSave);
                 
@@ -315,7 +365,7 @@
                 console.log('✅ Settings saved to browser.storage successfully');
                 
                 // 保存後に確認読み取り
-                const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration', 'twitchChatFlowShadowOpacity', 'twitchChatFlowTextOpacity', 'twitchChatFlowFontWeight']);
+                const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration', 'twitchChatFlowShadowOpacity', 'twitchChatFlowTextOpacity', 'twitchChatFlowFontWeight', 'twitchChatFlowCommentOverflow']);
                 console.log('🔍 Verification read:', verification);
                 
                 // アクティブタブのコンテンツスクリプトに設定変更を通知
@@ -395,6 +445,22 @@
             settings.fontWeight = newWeight;
             fontWeightValue.textContent = settings.fontWeight;
             await saveSettings();
+        });
+        
+        overflowOverlap.addEventListener('change', async () => {
+            if (overflowOverlap.checked) {
+                console.log('🔄 Comment overflow changed to: overlap');
+                settings.commentOverflow = 'overlap';
+                await saveSettings();
+            }
+        });
+        
+        overflowHide.addEventListener('change', async () => {
+            if (overflowHide.checked) {
+                console.log('🔄 Comment overflow changed to: hide');
+                settings.commentOverflow = 'hide';
+                await saveSettings();
+            }
         });
         
         function updateStatus(enabled) {

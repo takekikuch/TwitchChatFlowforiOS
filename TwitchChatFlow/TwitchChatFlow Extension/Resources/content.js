@@ -9,10 +9,11 @@
 		fontSize: 24,
 		duration: 7,
 		opacity: 1,
-		danmakuDensity: 2,
+		danmakuDensity: 3,
 		shadowOpacity: 0.8,
 		textOpacity: 1.0,
-		fontWeight: 400
+		fontWeight: 400,
+		commentOverflow: 'overlap'
 	};
 	let core;
 	
@@ -67,7 +68,9 @@
 			duration: 7,
 			shadowOpacity: 0.8,
 			textOpacity: 1.0,
-			fontWeight: 400
+			fontWeight: 400,
+			commentOverflow: 'overlap',
+			danmakuDensity: 3
 		};
 		
 		try {
@@ -77,7 +80,8 @@
 				twitchChatFlowDuration: 7,
 				twitchChatFlowShadowOpacity: 0.8,
 				twitchChatFlowTextOpacity: 1.0,
-				twitchChatFlowFontWeight: 400
+				twitchChatFlowFontWeight: 400,
+				twitchChatFlowCommentOverflow: 'overlap'
 			});
 			
 			settings.enabled = result.twitchChatFlowEnabled;
@@ -86,6 +90,7 @@
 			settings.shadowOpacity = result.twitchChatFlowShadowOpacity;
 			settings.textOpacity = result.twitchChatFlowTextOpacity;
 			settings.fontWeight = result.twitchChatFlowFontWeight;
+			settings.commentOverflow = result.twitchChatFlowCommentOverflow;
 			console.log('📖 Settings loaded from browser.storage for popup:', settings);
 		} catch (error) {
 			console.log('📝 Using default settings for global popup:', error);
@@ -182,7 +187,7 @@
 				</div>
 			</div>
 			
-			<div style="margin-bottom: 25px;">
+			<div style="margin-bottom: 20px;">
 				<label style="color: white; font-size: 14px; display: block; margin-bottom: 10px;">
 					文字の太さ: <span id="tcf-global-font-weight-value">${settings.fontWeight}</span>
 				</label>
@@ -190,6 +195,22 @@
 					   style="width: 100%; height: 8px; border-radius: 4px; background: #464649; outline: none; -webkit-appearance: none;">
 				<div style="display: flex; justify-content: space-between; font-size: 12px; color: #a0a0a3; margin-top: 5px;">
 					<span>細</span><span>太</span>
+				</div>
+			</div>
+			
+			<div style="margin-bottom: 25px;">
+				<label style="color: white; font-size: 14px; display: block; margin-bottom: 10px;">コメント密度が高い時：</label>
+				<div style="display: flex; gap: 20px; margin-top: 8px;">
+					<label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; color: white;">
+						<input type="radio" name="tcf-comment-overflow" value="overlap" id="tcf-global-overflow-overlap" ${settings.commentOverflow === 'overlap' ? 'checked' : ''}
+							   style="width: 16px; height: 16px; margin: 0;">
+						<span style="user-select: none;">重ねて表示</span>
+					</label>
+					<label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; color: white;">
+						<input type="radio" name="tcf-comment-overflow" value="hide" id="tcf-global-overflow-hide" ${settings.commentOverflow === 'hide' ? 'checked' : ''}
+							   style="width: 16px; height: 16px; margin: 0;">
+						<span style="user-select: none;">非表示</span>
+					</label>
 				</div>
 			</div>
 			
@@ -236,6 +257,8 @@
 		const textOpacityValue = popup.querySelector('#tcf-global-text-opacity-value');
 		const fontWeightSlider = popup.querySelector('#tcf-global-font-weight-slider');
 		const fontWeightValue = popup.querySelector('#tcf-global-font-weight-value');
+		const overflowOverlap = popup.querySelector('#tcf-global-overflow-overlap');
+		const overflowHide = popup.querySelector('#tcf-global-overflow-hide');
 		const closeBtn = popup.querySelector('#tcf-global-close-btn');
 		
 		const saveSettings = async () => {
@@ -246,7 +269,8 @@
 					twitchChatFlowDuration: settings.duration,
 					twitchChatFlowShadowOpacity: settings.shadowOpacity,
 					twitchChatFlowTextOpacity: settings.textOpacity,
-					twitchChatFlowFontWeight: settings.fontWeight
+					twitchChatFlowFontWeight: settings.fontWeight,
+					twitchChatFlowCommentOverflow: settings.commentOverflow
 				});
 				console.log('💾 Global settings saved to browser.storage:', settings);
 				
@@ -293,6 +317,20 @@
 			settings.fontWeight = parseInt(fontWeightSlider.value);
 			fontWeightValue.textContent = settings.fontWeight;
 			await saveSettings();
+		});
+		
+		overflowOverlap.addEventListener('change', async () => {
+			if (overflowOverlap.checked) {
+				settings.commentOverflow = 'overlap';
+				await saveSettings();
+			}
+		});
+		
+		overflowHide.addEventListener('change', async () => {
+			if (overflowHide.checked) {
+				settings.commentOverflow = 'hide';
+				await saveSettings();
+			}
 		});
 		
 		closeBtn.addEventListener('click', () => {
@@ -420,7 +458,8 @@
 					twitchChatFlowDuration: 7,
 					twitchChatFlowShadowOpacity: 0.8,
 					twitchChatFlowTextOpacity: 1.0,
-					twitchChatFlowFontWeight: 400
+					twitchChatFlowFontWeight: 400,
+					twitchChatFlowCommentOverflow: 'overlap'
 				});
 				
 				settings.enabled = result.twitchChatFlowEnabled;
@@ -429,6 +468,7 @@
 				settings.shadowOpacity = result.twitchChatFlowShadowOpacity;
 				settings.textOpacity = result.twitchChatFlowTextOpacity;
 				settings.fontWeight = result.twitchChatFlowFontWeight;
+				settings.commentOverflow = result.twitchChatFlowCommentOverflow;
 				
 				console.log('📖 Settings loaded from browser.storage:', settings);
 				

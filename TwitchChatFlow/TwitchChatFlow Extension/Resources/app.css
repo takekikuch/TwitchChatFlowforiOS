@@ -39,6 +39,7 @@
 #danmaku-container[data-danmaku-mode=default] .danmaku-chat .danmaku-message {
   color: rgba(255, 255, 255, var(--textOpacity, 1));
   text-shadow: 2px 2px 4px rgba(0, 0, 0, var(--shadowOpacity, 0.8));
+  font-weight: var(--fontWeight, 400);
 }
 
 /* Text Decoration Styles */
@@ -55,9 +56,9 @@
   display: none;
 }
 
-/* Bold Text */
-#danmaku-container[data-danmaku-mode=default].bold .danmaku-chat {
-  font-weight: bold;
+/* Bold Text - Only applies when no fontWeight is set */
+#danmaku-container[data-danmaku-mode=default].bold .danmaku-chat .danmaku-message {
+  font-weight: var(--fontWeight, bold);
 }
 
 /* Main Animation: Right to Left Flow */

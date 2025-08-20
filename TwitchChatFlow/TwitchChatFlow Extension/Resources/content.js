@@ -13,7 +13,8 @@
 		shadowOpacity: 0.8,
 		textOpacity: 1.0,
 		fontWeight: 400,
-		commentOverflow: 'overlap'
+		commentOverflow: 'overlap',
+		delay: 0
 	};
 	let core;
 	
@@ -70,7 +71,8 @@
 			textOpacity: 1.0,
 			fontWeight: 400,
 			commentOverflow: 'overlap',
-			danmakuDensity: 3
+			danmakuDensity: 3,
+			delay: 0
 		};
 		
 		try {
@@ -81,7 +83,8 @@
 				twitchChatFlowShadowOpacity: 0.8,
 				twitchChatFlowTextOpacity: 1.0,
 				twitchChatFlowFontWeight: 400,
-				twitchChatFlowCommentOverflow: 'overlap'
+				twitchChatFlowCommentOverflow: 'overlap',
+				twitchChatFlowDelay: 0
 			});
 			
 			settings.enabled = result.twitchChatFlowEnabled;
@@ -91,6 +94,7 @@
 			settings.textOpacity = result.twitchChatFlowTextOpacity;
 			settings.fontWeight = result.twitchChatFlowFontWeight;
 			settings.commentOverflow = result.twitchChatFlowCommentOverflow;
+			settings.delay = result.twitchChatFlowDelay;
 			console.log('📖 Settings loaded from browser.storage for popup:', settings);
 		} catch (error) {
 			console.log('📝 Using default settings for global popup:', error);
@@ -214,6 +218,17 @@
 				</div>
 			</div>
 			
+			<div style="margin-bottom: 25px;">
+				<label style="color: white; font-size: 14px; display: block; margin-bottom: 10px;">
+					コメント遅延: <span id="tcf-global-delay-value">${settings.delay}</span>秒
+				</label>
+				<input type="range" id="tcf-global-delay-slider" min="0" max="30" value="${settings.delay}" step="1"
+					   style="width: 100%; height: 8px; border-radius: 4px; background: #464649; outline: none; -webkit-appearance: none;">
+				<div style="display: flex; justify-content: space-between; font-size: 12px; color: #a0a0a3; margin-top: 5px;">
+					<span>即時</span><span>30秒</span>
+				</div>
+			</div>
+			
 			<div style="text-align: right;">
 				<button id="tcf-global-close-btn" style="
 					background: #9146ff;
@@ -259,6 +274,8 @@
 		const fontWeightValue = popup.querySelector('#tcf-global-font-weight-value');
 		const overflowOverlap = popup.querySelector('#tcf-global-overflow-overlap');
 		const overflowHide = popup.querySelector('#tcf-global-overflow-hide');
+		const delaySlider = popup.querySelector('#tcf-global-delay-slider');
+		const delayValue = popup.querySelector('#tcf-global-delay-value');
 		const closeBtn = popup.querySelector('#tcf-global-close-btn');
 		
 		const saveSettings = async () => {
@@ -270,7 +287,8 @@
 					twitchChatFlowShadowOpacity: settings.shadowOpacity,
 					twitchChatFlowTextOpacity: settings.textOpacity,
 					twitchChatFlowFontWeight: settings.fontWeight,
-					twitchChatFlowCommentOverflow: settings.commentOverflow
+					twitchChatFlowCommentOverflow: settings.commentOverflow,
+					twitchChatFlowDelay: settings.delay
 				});
 				console.log('💾 Global settings saved to browser.storage:', settings);
 				
@@ -331,6 +349,12 @@
 				settings.commentOverflow = 'hide';
 				await saveSettings();
 			}
+		});
+		
+		delaySlider.addEventListener('input', async () => {
+			settings.delay = parseInt(delaySlider.value);
+			delayValue.textContent = settings.delay;
+			await saveSettings();
 		});
 		
 		closeBtn.addEventListener('click', () => {
@@ -459,7 +483,8 @@
 					twitchChatFlowShadowOpacity: 0.8,
 					twitchChatFlowTextOpacity: 1.0,
 					twitchChatFlowFontWeight: 400,
-					twitchChatFlowCommentOverflow: 'overlap'
+					twitchChatFlowCommentOverflow: 'overlap',
+					twitchChatFlowDelay: 0
 				});
 				
 				settings.enabled = result.twitchChatFlowEnabled;
@@ -469,6 +494,7 @@
 				settings.textOpacity = result.twitchChatFlowTextOpacity;
 				settings.fontWeight = result.twitchChatFlowFontWeight;
 				settings.commentOverflow = result.twitchChatFlowCommentOverflow;
+				settings.delay = result.twitchChatFlowDelay;
 				
 				console.log('📖 Settings loaded from browser.storage:', settings);
 				

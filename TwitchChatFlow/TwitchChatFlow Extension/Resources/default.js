@@ -160,45 +160,58 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 				return;
 			}
 			
-			const $chat = document.createElement('div');
-			$chat.classList.add('danmaku-chat');
+			// コメント遅延処理
+			const delayMs = (settings?.delay || 0) * 1000;
+			console.log('⏰ Comment delay:', settings?.delay || 0, 'seconds');
+			
+			const showDanmaku = () => {
+				const $chat = document.createElement('div');
+				$chat.classList.add('danmaku-chat');
 
-			const $usernameContainer = document.createElement('span');
-			$usernameContainer.classList.add('danmaku-username');
-			$usernameContainer.appendChild($username);
-			$chat.appendChild($usernameContainer);
+				const $usernameContainer = document.createElement('span');
+				$usernameContainer.classList.add('danmaku-username');
+				$usernameContainer.appendChild($username.cloneNode(true));
+				$chat.appendChild($usernameContainer);
 
-			const $messageContainer = document.createElement('span');
-			$messageContainer.classList.add('danmaku-message');
-			$messageContainer.appendChild($message);
-			$chat.appendChild($messageContainer);
+				const $messageContainer = document.createElement('span');
+				$messageContainer.classList.add('danmaku-message');
+				$messageContainer.appendChild($message.cloneNode(true));
+				$chat.appendChild($messageContainer);
 
-			// アニメーション終了時に要素を削除
-			$chat.addEventListener('animationend', () => $chat.remove());
+				// アニメーション終了時に要素を削除
+				$chat.addEventListener('animationend', () => $chat.remove());
 
-			const stack = getProperStack($chat);
-			if (stack === null) {
-				console.log('🚫 Danmaku hidden due to overflow settings');
-				return;
+				const stack = getProperStack($chat);
+				if (stack === null) {
+					console.log('🚫 Danmaku hidden due to overflow settings');
+					return;
+				}
+				console.log('🎨 Creating danmaku element, stack:', stack);
+				console.log('🎨 Danmaku element:', $chat);
+
+				$container.appendChild($chat);
+
+				setTimeout(() => {
+					let length = $message.getBoundingClientRect().width / $container.getBoundingClientRect().width || 0;
+					$chat.style.setProperty('--length', length);
+
+					waitUntil(() =>
+						!$container || !$container.contains($chat) || (
+							$container.getBoundingClientRect().left + $container.getBoundingClientRect().width >=
+							$chat.getBoundingClientRect().left + $chat.getBoundingClientRect().width + 200
+						)
+					).then(() => {
+						stacks[stack] = Math.max(stacks[stack] - 1, 0) || 0;
+					})
+				}, 0);
+			};
+			
+			// 遅延がある場合はsetTimeoutで遅らせる
+			if (delayMs > 0) {
+				setTimeout(showDanmaku, delayMs);
+			} else {
+				showDanmaku();
 			}
-			console.log('🎨 Creating danmaku element, stack:', stack);
-			console.log('🎨 Danmaku element:', $chat);
-
-			$container.appendChild($chat);
-
-			setTimeout(() => {
-				let length = $message.getBoundingClientRect().width / $container.getBoundingClientRect().width || 0;
-				$chat.style.setProperty('--length', length);
-
-				waitUntil(() =>
-					!$container || !$container.contains($chat) || (
-						$container.getBoundingClientRect().left + $container.getBoundingClientRect().width >=
-						$chat.getBoundingClientRect().left + $chat.getBoundingClientRect().width + 200
-					)
-				).then(() => {
-					stacks[stack] = Math.max(stacks[stack] - 1, 0) || 0;
-				})
-			}, 0);
 		}
 	};
 })();

@@ -256,6 +256,15 @@
         </div>
     </div>
     
+    <div class="control-group">
+        <label for="delaySlider">コメント遅延: <span id="delayValue">0</span>秒</label>
+        <input type="range" id="delaySlider" min="0" max="30" value="0" step="1">
+        <div class="slider-labels">
+            <span>即時</span>
+            <span>30秒</span>
+        </div>
+    </div>
+    
     <div class="status enabled" id="status">
         弾幕表示が有効です
     </div>
@@ -280,6 +289,8 @@
         const fontWeightValue = document.getElementById('fontWeightValue');
         const overflowOverlap = document.getElementById('overflowOverlap');
         const overflowHide = document.getElementById('overflowHide');
+        const delaySlider = document.getElementById('delaySlider');
+        const delayValue = document.getElementById('delayValue');
         
         // デフォルト設定
         let settings = {
@@ -291,7 +302,8 @@
             shadowOpacity: 0.8,
             textOpacity: 1.0,
             fontWeight: 400,
-            commentOverflow: 'overlap'
+            commentOverflow: 'overlap',
+            delay: 0
         };
         
         // 設定の読み込み（browser.storage使用）
@@ -306,7 +318,8 @@
                     twitchChatFlowShadowOpacity: 0.8,
                     twitchChatFlowTextOpacity: 1.0,
                     twitchChatFlowFontWeight: 400,
-                    twitchChatFlowCommentOverflow: 'overlap'
+                    twitchChatFlowCommentOverflow: 'overlap',
+                    twitchChatFlowDelay: 0
                 });
                 
                 console.log('🔍 Raw storage result:', result);
@@ -318,6 +331,7 @@
                 settings.textOpacity = result.twitchChatFlowTextOpacity;
                 settings.fontWeight = result.twitchChatFlowFontWeight;
                 settings.commentOverflow = result.twitchChatFlowCommentOverflow;
+                settings.delay = result.twitchChatFlowDelay;
                 
                 console.log('📖 Settings loaded from browser.storage:', settings);
                 console.log('📖 Enabled:', settings.enabled, 'FontSize:', settings.fontSize, 'Duration:', settings.duration);
@@ -343,6 +357,8 @@
             } else {
                 overflowHide.checked = true;
             }
+            delaySlider.value = settings.delay;
+            delayValue.textContent = settings.delay;
             updateStatus(settings.enabled);
         }
         
@@ -357,7 +373,8 @@
                     twitchChatFlowShadowOpacity: settings.shadowOpacity,
                     twitchChatFlowTextOpacity: settings.textOpacity,
                     twitchChatFlowFontWeight: settings.fontWeight,
-                    twitchChatFlowCommentOverflow: settings.commentOverflow
+                    twitchChatFlowCommentOverflow: settings.commentOverflow,
+                    twitchChatFlowDelay: settings.delay
                 };
                 console.log('💾 Data to save:', dataToSave);
                 
@@ -365,7 +382,7 @@
                 console.log('✅ Settings saved to browser.storage successfully');
                 
                 // 保存後に確認読み取り
-                const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration', 'twitchChatFlowShadowOpacity', 'twitchChatFlowTextOpacity', 'twitchChatFlowFontWeight', 'twitchChatFlowCommentOverflow']);
+                const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration', 'twitchChatFlowShadowOpacity', 'twitchChatFlowTextOpacity', 'twitchChatFlowFontWeight', 'twitchChatFlowCommentOverflow', 'twitchChatFlowDelay']);
                 console.log('🔍 Verification read:', verification);
                 
                 // アクティブタブのコンテンツスクリプトに設定変更を通知
@@ -461,6 +478,14 @@
                 settings.commentOverflow = 'hide';
                 await saveSettings();
             }
+        });
+        
+        delaySlider.addEventListener('input', async () => {
+            const newDelay = parseInt(delaySlider.value);
+            console.log('🔄 Comment delay changed to:', newDelay);
+            settings.delay = newDelay;
+            delayValue.textContent = settings.delay;
+            await saveSettings();
         });
         
         function updateStatus(enabled) {

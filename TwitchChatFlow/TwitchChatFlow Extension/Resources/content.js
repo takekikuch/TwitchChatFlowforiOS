@@ -1,6 +1,11 @@
 (() => {
 	console.log('🎉 Twitch Chat Flow: Extension loaded!');
 	
+	// 擬似フルスクリーン関連の変数
+	let isPseudoFullscreen = false;
+	let originalPlayerStyle = {};
+	let originalPageStyle = {};
+	
 	// グローバル設定変数
 	let settings = {
 		mode: 'default',
@@ -581,12 +586,213 @@
 			return core;
 		}
 
+		// 擬似フルスクリーン機能
+		const PLAYER_SELECTORS = [
+			'[data-test-selector="video-player__container"]',
+			'.video-player__container',
+			'[data-a-target="player-overlay-click-handler"]',
+			'.video-player',
+			'video'
+		];
+		
+		const FULLSCREEN_BUTTON_SELECTORS = [
+			'[data-a-target="player-fullscreen-button"]',
+			'button[aria-label*="全画面"]',
+			'button[aria-label*="fullscreen"]',
+			'button[aria-label*="Fullscreen"]'
+		];
+		
+		const enterPseudoFullscreen = () => {
+			console.log('🖥️ Entering pseudo fullscreen mode');
+			
+			if (isPseudoFullscreen) return;
+			
+			const playerContainer = document.querySelector(PLAYER_SELECTORS.join(','));
+			if (!playerContainer) {
+				console.error('❌ Player container not found');
+				return;
+			}
+			
+			console.log('🎯 Found player container:', playerContainer);
+			
+			// 現在のスタイルを保存（computed styleも含める）
+			const computedStyle = window.getComputedStyle(playerContainer);
+			originalPlayerStyle = {
+				position: playerContainer.style.position || computedStyle.position,
+				top: playerContainer.style.top || computedStyle.top,
+				left: playerContainer.style.left || computedStyle.left,
+				width: playerContainer.style.width || computedStyle.width,
+				height: playerContainer.style.height || computedStyle.height,
+				zIndex: playerContainer.style.zIndex || computedStyle.zIndex,
+				backgroundColor: playerContainer.style.backgroundColor || computedStyle.backgroundColor,
+				transform: playerContainer.style.transform || computedStyle.transform,
+				margin: playerContainer.style.margin || computedStyle.margin,
+				padding: playerContainer.style.padding || computedStyle.padding
+			};
+			
+			originalPageStyle = {
+				overflow: document.body.style.overflow || '',
+				margin: document.body.style.margin || '',
+				padding: document.body.style.padding || ''
+			};
+			
+			console.log('📱 Using CSS Dynamic Viewport Height (dvh) for fullscreen');
+			
+			// dvhを使ったフルスクリーンスタイルを適用
+			playerContainer.style.setProperty('position', 'fixed', 'important');
+			playerContainer.style.setProperty('top', '0px', 'important');
+			playerContainer.style.setProperty('left', '0px', 'important');
+			playerContainer.style.setProperty('width', '100dvw', 'important');
+			playerContainer.style.setProperty('height', '100dvh', 'important');
+			playerContainer.style.setProperty('z-index', '999999', 'important');
+			playerContainer.style.setProperty('background-color', '#000', 'important');
+			playerContainer.style.setProperty('transform', 'none', 'important');
+			playerContainer.style.setProperty('margin', '0', 'important');
+			playerContainer.style.setProperty('padding', '0', 'important');
+			playerContainer.style.setProperty('max-width', 'none', 'important');
+			playerContainer.style.setProperty('max-height', 'none', 'important');
+			
+			// ページのスクロールを無効化
+			document.body.style.overflow = 'hidden';
+			document.body.style.margin = '0';
+			document.body.style.padding = '0';
+			
+			// 擬似フルスクリーンクラスを追加
+			playerContainer.classList.add('pseudo-fullscreen');
+			document.body.classList.add('pseudo-fullscreen-active');
+			
+			// ビデオ要素も調整
+			const video = playerContainer.querySelector('video');
+			if (video) {
+				video.style.setProperty('width', '100%', 'important');
+				video.style.setProperty('height', '100%', 'important');
+				video.style.setProperty('object-fit', 'contain', 'important');
+				console.log('📺 Video element adjusted');
+			}
+			
+			isPseudoFullscreen = true;
+			console.log('✅ Pseudo fullscreen mode activated with dvh');
+		};
+		
+		const exitPseudoFullscreen = () => {
+			console.log('🔽 Exiting pseudo fullscreen mode');
+			
+			if (!isPseudoFullscreen) return;
+			
+			const playerContainer = document.querySelector(PLAYER_SELECTORS.join(','));
+			if (playerContainer) {
+				// すべての擬似フルスクリーン用のスタイルをリセット
+				playerContainer.style.removeProperty('position');
+				playerContainer.style.removeProperty('top');
+				playerContainer.style.removeProperty('left');
+				playerContainer.style.removeProperty('width');
+				playerContainer.style.removeProperty('height');
+				playerContainer.style.removeProperty('z-index');
+				playerContainer.style.removeProperty('background-color');
+				playerContainer.style.removeProperty('transform');
+				playerContainer.style.removeProperty('margin');
+				playerContainer.style.removeProperty('padding');
+				playerContainer.style.removeProperty('max-width');
+				playerContainer.style.removeProperty('max-height');
+				
+				// 元のスタイルがある場合は復元
+				Object.keys(originalPlayerStyle).forEach(key => {
+					if (originalPlayerStyle[key] && originalPlayerStyle[key] !== 'auto' && originalPlayerStyle[key] !== '') {
+						playerContainer.style.setProperty(key, originalPlayerStyle[key]);
+					}
+				});
+				
+				// クラスを削除
+				playerContainer.classList.remove('pseudo-fullscreen');
+				
+				// ビデオ要素のスタイルもリセット
+				const video = playerContainer.querySelector('video');
+				if (video) {
+					video.style.removeProperty('width');
+					video.style.removeProperty('height');
+					video.style.removeProperty('object-fit');
+					console.log('📺 Video element style reset');
+				}
+			}
+			
+			// ページスタイルを復元
+			Object.keys(originalPageStyle).forEach(key => {
+				if (originalPageStyle[key]) {
+					document.body.style[key] = originalPageStyle[key];
+				} else {
+					document.body.style.removeProperty(key);
+				}
+			});
+			
+			document.body.classList.remove('pseudo-fullscreen-active');
+			
+			isPseudoFullscreen = false;
+			
+			console.log('✅ Pseudo fullscreen mode deactivated');
+		};
+		
+		const togglePseudoFullscreen = () => {
+			if (isPseudoFullscreen) {
+				exitPseudoFullscreen();
+			} else {
+				enterPseudoFullscreen();
+			}
+		};
+		
+		// フルスクリーンボタンのオーバーライド
+		const overrideFullscreenButtons = () => {
+			const fullscreenButtons = document.querySelectorAll(FULLSCREEN_BUTTON_SELECTORS.join(','));
+			fullscreenButtons.forEach(button => {
+				if (button.dataset.tcfOverridden) return;
+				
+				console.log('🔄 Overriding fullscreen button:', button);
+				button.dataset.tcfOverridden = 'true';
+				
+				// 既存のイベントリスナーを削除
+				const newButton = button.cloneNode(true);
+				button.parentNode?.replaceChild(newButton, button);
+				
+				// 新しいイベントリスナーを追加
+				newButton.addEventListener('click', (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					togglePseudoFullscreen();
+				}, true);
+			});
+		};
+		
+		// ESCキーでフルスクリーン解除
+		const handleKeydown = (e) => {
+			if (e.key === 'Escape' && isPseudoFullscreen) {
+				exitPseudoFullscreen();
+			}
+		};
+		
+		// フルスクリーンボタンの監視と初期化
+		const initPseudoFullscreen = () => {
+			console.log('🖥️ Initializing pseudo fullscreen feature');
+			
+			// ESCキーイベントリスナーを追加
+			document.addEventListener('keydown', handleKeydown, true);
+			
+			// 定期的にフルスクリーンボタンをオーバーライド
+			setInterval(overrideFullscreenButtons, 2000);
+			
+			// 初回実行
+			setTimeout(overrideFullscreenButtons, 1000);
+			
+			console.log('✅ Pseudo fullscreen feature initialized');
+		};
+
 		console.log('🚀 Starting main loop...');
 		await getCore();
 		if (!core) {
 			console.error('❌ TwitchChatDanmaku: core not found, abort!');
 			return;
 		}
+
+		// 擬似フルスクリーン機能を初期化
+		initPseudoFullscreen();
 
 		const reset = async () => {
 			console.log('🗑️ RESET called - removing existing containers');

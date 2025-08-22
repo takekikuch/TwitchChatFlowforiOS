@@ -15,20 +15,23 @@ iOS Safari Web Extension for displaying Twitch chat comments as Niconico-style d
 
 ### Safari Web Extension の核心部分
 
-**ファイル分離の仕組み**:
-- Extension root: `manifest.json`, `app.js`, `default.js`, `app.css` - Safari必須ファイル
-- Resources/: アイコン、ポップアップ、バックグラウンドスクリプト - 従来の拡張機能ファイル
-
-この分離は Safari Web Extension の制約により必要。
+**ファイル構成**:
+- `Resources/manifest.json`: 拡張機能の設定ファイル（Manifest V3）
+- `Resources/content.js`: メインコンテンツスクリプト（チャット検出とメッセージング）
+- `Resources/default.js`: 弾幕レンダリングエンジン
+- `Resources/background.js`: バックグラウンドスクリプト（action.onClickedハンドラー）
+- `Resources/popup.html`: 設定用ポップアップUI
+- `Resources/app.css`: 弾幕アニメーション定義
 
 ### 弾幕システムの動作
 
 **3つの主要コンポーネント**:
 
-1. **app.js** - チャット検出エンジン
+1. **content.js** - 統合チャット検出・メッセージングエンジン
    - 複数のCSSセレクターでTwitchのDOM変更に対応
-   - MutationObserverベースでリアルタイム検出
-   - `isDanmakuWorking()` でコンテナ状態監視
+   - `browser.runtime.onMessage` でポップアップとの通信
+   - `browser.storage.local` での設定同期
+   - グローバルポップアップ表示機能
 
 2. **default.js** - 弾幕レンダリングエンジン
    - `window._twitchChatDanmaku['default']` でグローバル登録
@@ -53,9 +56,18 @@ const CHAT_CONTAINER_SELECTORS = [
 
 ### 設定システム
 
-- localStorage ベースの永続化
+- **browser.storage.local** ベースの永続化（Safari Extension制約によりlocalStorageは共有されない）
+- **ポップアップUI**: 拡張機能アイコンタップで表示、設定即座反映
+- **メッセージング**: ポップアップ ↔ コンテンツスクリプト間で設定同期
 - デフォルト設定: `fontSize: 24, duration: 7, opacity: 1, danmakuDensity: 2`
 - CSSカスタムプロパティ経由でリアルタイム反映
+
+### 重要なアーキテクチャ決定
+
+**ポップアップ表示方式**:
+- `manifest.json` で `default_popup` は設定しない
+- `browser.action.onClicked` イベントでコンテンツスクリプト内のポップアップを表示
+- これによりSafari ExtensionのiOS制約を回避
 
 ## 開発時の注意点
 
@@ -76,9 +88,11 @@ resources:
 
 ### manifest.json の Safari 固有設定
 
-- `content_scripts.css`: Extension root の "app.css" を参照
-- `content_scripts.js`: Extension root の ["default.js", "app.js"] を参照（順序重要）
-- Resourcesパスとrootパスの混在設計
+- **Manifest V3** 形式使用
+- `content_scripts.js`: `["default.js", "content.js"]` の順序が重要（defaultが先）
+- `action.default_popup` は設定せず、クリックイベントで動的ポップアップ表示
+- `permissions`: `["storage", "activeTab", "tabs"]` でブラウザAPI使用
+- `host_permissions`: `["*://*.twitch.tv/*"]` でTwitchサイトアクセス
 
 ### デバッグ
 
@@ -96,7 +110,22 @@ Safari の Web Inspector でコンテンツスクリプトをデバッグ:
 
 - **弾幕が途中で消える**: `isDanmakuWorking()` の頻繁な再初期化が原因。monitoring interval を調整
 - **チャット検出されない**: Twitch DOM変更により新しいセレクターが必要
-- **CSS適用されない**: manifest.json の css パス確認、Extension root 配置確認
+- **設定が保存されない**: Safari Extensionでは`localStorage`が共有されないため、`browser.storage.local`使用必須
+- **ポップアップが表示されない**: `manifest.json`で`default_popup`と`action.onClicked`は競合する
+- **メッセージが届かない**: content script と background script の通信にはtabs.sendMessage使用
+
+## 開発コマンド
+
+### Xcodeプロジェクト生成
+```bash
+# XcodeGenを使用してプロジェクトファイル生成
+xcodegen generate
+```
+
+### 拡張機能デバッグ
+1. Xcodeでプロジェクトをビルド・実行
+2. Safari > 開発 > [デバイス名] > [Twitchページ]
+3. Web Inspectorでコンソールログ確認
 
 ## プロジェクト履歴
 

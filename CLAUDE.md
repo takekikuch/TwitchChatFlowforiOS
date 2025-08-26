@@ -114,12 +114,27 @@ Safari の Web Inspector でコンテンツスクリプトをデバッグ:
 - **ポップアップが表示されない**: `manifest.json`で`default_popup`と`action.onClicked`は競合する
 - **メッセージが届かない**: content script と background script の通信にはtabs.sendMessage使用
 
+### アイコン管理
+
+**iOS 18 Liquid Glass対応**:
+- `AppIcon_liquid.icon`ファイルはTwitchChatFlowディレクトリ直下に配置
+- Xcode 16ベータ版が必要（通常版ではコンパイルエラー）
+- App Icons and Launch Screen設定で "AppIcon_liquid" を指定
+
+**Safari拡張機能アイコン**:
+- `TwitchChatFlow Extension/Resources/images/`内のアイコンファイル
+- manifest.jsonで16px、48px、128pxを参照
+- 追加サイズ（64px、96px、256px、512px）も生成済み
+
 ## 開発コマンド
 
-### Xcodeプロジェクト生成
+### ビルドとテスト
 ```bash
-# XcodeGenを使用してプロジェクトファイル生成
-xcodegen generate
+# 標準ビルド（Xcode 16ベータ版推奨）
+xcodebuild -project TwitchChatFlow.xcodeproj -scheme TwitchChatFlow -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.4' build
+
+# クリーンビルド
+xcodebuild -project TwitchChatFlow.xcodeproj -scheme TwitchChatFlow -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.4' clean build
 ```
 
 ### 拡張機能デバッグ

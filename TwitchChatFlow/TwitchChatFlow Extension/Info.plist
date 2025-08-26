@@ -2,12 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleName</key>
+	<string>Twitch Chat Flow Extension</string>
+	<key>CFBundleDisplayName</key>
+	<string>Twitch Chat Flow</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.takekikuch.TwitchChatFlow.Extension</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.Safari.web-extension</string>
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).SafariWebExtensionHandler</string>
+		<key>NSHumanReadableDescription</key>
+		<string>Twitchのチャットコメントをニコニコ動画のように右から左に流れる弾幕表示にするSafari拡張機能です。コメントの表示速度、文字サイズ、透明度、密度などを自由に調整できます。</string>
 	</dict>
 </dict>
 </plist>

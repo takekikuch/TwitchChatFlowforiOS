@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Twitch Chat Flow</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.takekikuch.TwitchChatFlow.Extension</string>
+	<string>com.takekikuch.TwitchChatFlow.TwitchChatFlow.Extension</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.0</string>
 	<key>CFBundleShortVersionString</key>

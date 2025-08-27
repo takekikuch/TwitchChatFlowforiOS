@@ -602,6 +602,11 @@
 			'button[aria-label*="Fullscreen"]'
 		];
 		
+		// 保存用の変数
+		let fullscreenWrapper = null;
+		let originalParent = null;
+		let originalNextSibling = null;
+
 		const enterPseudoFullscreen = () => {
 			console.log('🖥️ Entering pseudo fullscreen mode');
 			
@@ -614,6 +619,10 @@
 			}
 			
 			console.log('🎯 Found player container:', playerContainer);
+			
+			// 現在の親要素と位置を保存
+			originalParent = playerContainer.parentNode;
+			originalNextSibling = playerContainer.nextSibling;
 			
 			// 現在のスタイルを保存（computed styleも含める）
 			const computedStyle = window.getComputedStyle(playerContainer);
@@ -636,16 +645,33 @@
 				padding: document.body.style.padding || ''
 			};
 			
-			console.log('📱 Using CSS Dynamic Viewport Height (dvh) for fullscreen');
+			console.log('📱 Creating fullscreen wrapper at body level');
 			
-			// dvhを使ったフルスクリーンスタイルを適用
-			playerContainer.style.setProperty('position', 'fixed', 'important');
-			playerContainer.style.setProperty('top', '0px', 'important');
-			playerContainer.style.setProperty('left', '0px', 'important');
-			playerContainer.style.setProperty('width', '100dvw', 'important');
-			playerContainer.style.setProperty('height', '100dvh', 'important');
-			playerContainer.style.setProperty('z-index', '999999', 'important');
-			playerContainer.style.setProperty('background-color', '#000', 'important');
+			// bodyの直下にフルスクリーンラッパーを作成
+			fullscreenWrapper = document.createElement('div');
+			fullscreenWrapper.className = 'twitch-chat-flow-fullscreen-wrapper';
+			fullscreenWrapper.style.setProperty('position', 'fixed', 'important');
+			fullscreenWrapper.style.setProperty('top', '0px', 'important');
+			fullscreenWrapper.style.setProperty('left', '0px', 'important');
+			fullscreenWrapper.style.setProperty('width', '100dvw', 'important');
+			fullscreenWrapper.style.setProperty('height', '100dvh', 'important');
+			fullscreenWrapper.style.setProperty('z-index', '2147483647', 'important');
+			fullscreenWrapper.style.setProperty('background-color', '#000', 'important');
+			fullscreenWrapper.style.setProperty('margin', '0', 'important');
+			fullscreenWrapper.style.setProperty('padding', '0', 'important');
+			
+			// プレイヤーを新しいラッパーに移動
+			document.body.appendChild(fullscreenWrapper);
+			fullscreenWrapper.appendChild(playerContainer);
+			
+			// プレイヤー要素のスタイル調整
+			playerContainer.style.setProperty('position', 'relative', 'important');
+			playerContainer.style.setProperty('top', 'auto', 'important');
+			playerContainer.style.setProperty('left', 'auto', 'important');
+			playerContainer.style.setProperty('width', '100%', 'important');
+			playerContainer.style.setProperty('height', '100%', 'important');
+			playerContainer.style.setProperty('z-index', 'auto', 'important');
+			playerContainer.style.setProperty('background-color', 'transparent', 'important');
 			playerContainer.style.setProperty('transform', 'none', 'important');
 			playerContainer.style.setProperty('margin', '0', 'important');
 			playerContainer.style.setProperty('padding', '0', 'important');
@@ -671,7 +697,7 @@
 			}
 			
 			isPseudoFullscreen = true;
-			console.log('✅ Pseudo fullscreen mode activated with dvh');
+			console.log('✅ Pseudo fullscreen mode activated with body-level wrapper');
 		};
 		
 		const exitPseudoFullscreen = () => {
@@ -680,7 +706,15 @@
 			if (!isPseudoFullscreen) return;
 			
 			const playerContainer = document.querySelector(PLAYER_SELECTORS.join(','));
-			if (playerContainer) {
+			if (playerContainer && originalParent && fullscreenWrapper) {
+				// プレイヤーコンテナを元の位置に戻す
+				console.log('📱 Restoring player container to original position');
+				if (originalNextSibling) {
+					originalParent.insertBefore(playerContainer, originalNextSibling);
+				} else {
+					originalParent.appendChild(playerContainer);
+				}
+				
 				// すべての擬似フルスクリーン用のスタイルをリセット
 				playerContainer.style.removeProperty('position');
 				playerContainer.style.removeProperty('top');
@@ -715,6 +749,12 @@
 				}
 			}
 			
+			// フルスクリーンラッパーを削除
+			if (fullscreenWrapper && fullscreenWrapper.parentNode) {
+				fullscreenWrapper.parentNode.removeChild(fullscreenWrapper);
+				console.log('🗑️ Fullscreen wrapper removed');
+			}
+			
 			// ページスタイルを復元
 			Object.keys(originalPageStyle).forEach(key => {
 				if (originalPageStyle[key]) {
@@ -726,9 +766,14 @@
 			
 			document.body.classList.remove('pseudo-fullscreen-active');
 			
+			// 変数をリセット
+			fullscreenWrapper = null;
+			originalParent = null;
+			originalNextSibling = null;
+			
 			isPseudoFullscreen = false;
 			
-			console.log('✅ Pseudo fullscreen mode deactivated');
+			console.log('✅ Pseudo fullscreen mode deactivated and DOM restored');
 		};
 		
 		const togglePseudoFullscreen = () => {

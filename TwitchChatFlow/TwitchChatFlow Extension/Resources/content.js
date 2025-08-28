@@ -678,8 +678,8 @@
 			playerContainer.style.setProperty('max-width', 'none', 'important');
 			playerContainer.style.setProperty('max-height', 'none', 'important');
 			
-			// ページのスクロールを無効化
-			document.body.style.overflow = 'hidden';
+			// ページのスクロールを有効化
+			document.body.style.overflow = 'auto';
 			document.body.style.margin = '0';
 			document.body.style.padding = '0';
 			
@@ -764,6 +764,7 @@
 				}
 			});
 			
+			
 			document.body.classList.remove('pseudo-fullscreen-active');
 			
 			// 変数をリセット
@@ -828,6 +829,16 @@
 			
 			console.log('✅ Pseudo fullscreen feature initialized');
 		};
+
+		// styleタグを常に挿入して全体の高さを150%に設定
+		const scrollStyle = document.createElement('style');
+		scrollStyle.id = 'twitch-chat-flow-scroll-style';
+		scrollStyle.textContent = `
+			html, body, .root { 
+				height: 150% !important; 
+			}
+		`;
+		document.head.appendChild(scrollStyle);
 
 		console.log('🚀 Starting main loop...');
 		await getCore();

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Chat Flow</title>
+    <title>Danmaku Flow Chat</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -185,7 +185,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Twitch Chat Flow</h1>
+        <h1>Danmaku Flow Chat</h1>
         <p>ニコニコ動画風コメント表示</p>
     </div>
     
@@ -274,7 +274,6 @@
     </div>
     
     <script>
-        console.log('🎨 Popup loaded');
         const enableToggle = document.getElementById('enableToggle');
         const status = document.getElementById('status');
         const fontSizeSlider = document.getElementById('fontSizeSlider');
@@ -308,9 +307,7 @@
         
         // 設定の読み込み（browser.storage使用）
         async function loadSettings() {
-            console.log('🔍 Loading settings from browser.storage...');
             try {
-                console.log('🔍 Calling browser.storage.local.get...');
                 const result = await browser.storage.local.get({
                     twitchChatFlowEnabled: true,
                     twitchChatFlowFontSize: 24,
@@ -322,7 +319,6 @@
                     twitchChatFlowDelay: 0
                 });
                 
-                console.log('🔍 Raw storage result:', result);
                 
                 settings.enabled = result.twitchChatFlowEnabled;
                 settings.fontSize = result.twitchChatFlowFontSize;
@@ -333,11 +329,7 @@
                 settings.commentOverflow = result.twitchChatFlowCommentOverflow;
                 settings.delay = result.twitchChatFlowDelay;
                 
-                console.log('📖 Settings loaded from browser.storage:', settings);
-                console.log('📖 Enabled:', settings.enabled, 'FontSize:', settings.fontSize, 'Duration:', settings.duration);
             } catch (error) {
-                console.error('❌ Error loading settings:', error);
-                console.log('📝 Using default settings');
             }
             
             // UIを更新
@@ -364,7 +356,6 @@
         
         // 設定の保存（browser.storage使用）
         async function saveSettings() {
-            console.log('💾 Saving settings:', settings);
             try {
                 const dataToSave = {
                     twitchChatFlowEnabled: settings.enabled,
@@ -376,49 +367,36 @@
                     twitchChatFlowCommentOverflow: settings.commentOverflow,
                     twitchChatFlowDelay: settings.delay
                 };
-                console.log('💾 Data to save:', dataToSave);
                 
                 await browser.storage.local.set(dataToSave);
-                console.log('✅ Settings saved to browser.storage successfully');
                 
                 // 保存後に確認読み取り
                 const verification = await browser.storage.local.get(['twitchChatFlowEnabled', 'twitchChatFlowFontSize', 'twitchChatFlowDuration', 'twitchChatFlowShadowOpacity', 'twitchChatFlowTextOpacity', 'twitchChatFlowFontWeight', 'twitchChatFlowCommentOverflow', 'twitchChatFlowDelay']);
-                console.log('🔍 Verification read:', verification);
                 
                 // アクティブタブのコンテンツスクリプトに設定変更を通知
                 notifyContentScript();
             } catch (error) {
-                console.error('❌ Failed to save settings:', error);
-                console.error('❌ Error details:', error.message, error.stack);
             }
         }
         
         // コンテンツスクリプトに設定変更を通知
         async function notifyContentScript() {
-            console.log('📨 Attempting to notify content script...');
             try {
                 const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-                console.log('📨 Found tabs:', tabs);
                 
                 if (tabs[0] && tabs[0].url && tabs[0].url.includes('twitch.tv')) {
-                    console.log('📨 Sending message to tab:', tabs[0].id, 'URL:', tabs[0].url);
                     const response = await browser.tabs.sendMessage(tabs[0].id, {
                         action: 'updateSettings',
                         settings: settings
                     });
-                    console.log('✅ Message sent successfully, response:', response);
                 } else {
-                    console.log('⚠️ Not on Twitch tab, skipping notification');
                 }
             } catch (error) {
-                console.error('❌ Could not notify content script:', error);
-                console.error('❌ Error details:', error.message, error.stack);
             }
         }
         
         // イベントリスナーの設定
         enableToggle.addEventListener('change', async () => {
-            console.log('🔄 Enable toggle changed to:', enableToggle.checked);
             settings.enabled = enableToggle.checked;
             updateStatus(settings.enabled);
             await saveSettings();
@@ -426,7 +404,6 @@
         
         fontSizeSlider.addEventListener('input', async () => {
             const newSize = parseInt(fontSizeSlider.value);
-            console.log('🔄 Font size changed to:', newSize);
             settings.fontSize = newSize;
             fontSizeValue.textContent = settings.fontSize;
             await saveSettings();
@@ -434,7 +411,6 @@
         
         durationSlider.addEventListener('input', async () => {
             const newDuration = parseInt(durationSlider.value);
-            console.log('🔄 Duration changed to:', newDuration);
             settings.duration = newDuration;
             durationValue.textContent = settings.duration;
             await saveSettings();
@@ -442,7 +418,6 @@
         
         shadowOpacitySlider.addEventListener('input', async () => {
             const newOpacity = parseInt(shadowOpacitySlider.value) / 100;
-            console.log('🔄 Shadow opacity changed to:', newOpacity);
             settings.shadowOpacity = newOpacity;
             shadowOpacityValue.textContent = Math.round(newOpacity * 100);
             await saveSettings();
@@ -450,7 +425,6 @@
         
         textOpacitySlider.addEventListener('input', async () => {
             const newOpacity = parseInt(textOpacitySlider.value) / 100;
-            console.log('🔄 Text opacity changed to:', newOpacity);
             settings.textOpacity = newOpacity;
             textOpacityValue.textContent = Math.round(newOpacity * 100);
             await saveSettings();
@@ -458,7 +432,6 @@
         
         fontWeightSlider.addEventListener('input', async () => {
             const newWeight = parseInt(fontWeightSlider.value);
-            console.log('🔄 Font weight changed to:', newWeight);
             settings.fontWeight = newWeight;
             fontWeightValue.textContent = settings.fontWeight;
             await saveSettings();
@@ -466,7 +439,6 @@
         
         overflowOverlap.addEventListener('change', async () => {
             if (overflowOverlap.checked) {
-                console.log('🔄 Comment overflow changed to: overlap');
                 settings.commentOverflow = 'overlap';
                 await saveSettings();
             }
@@ -474,7 +446,6 @@
         
         overflowHide.addEventListener('change', async () => {
             if (overflowHide.checked) {
-                console.log('🔄 Comment overflow changed to: hide');
                 settings.commentOverflow = 'hide';
                 await saveSettings();
             }
@@ -482,7 +453,6 @@
         
         delaySlider.addEventListener('input', async () => {
             const newDelay = parseInt(delaySlider.value);
-            console.log('🔄 Comment delay changed to:', newDelay);
             settings.delay = newDelay;
             delayValue.textContent = settings.delay;
             await saveSettings();
@@ -499,15 +469,9 @@
         }
         
         // 初期化
-        console.log('🚀 Popup script started');
-        console.log('🚀 Browser object:', typeof browser);
-        console.log('🚀 Browser.storage:', typeof browser?.storage);
-        console.log('🚀 Browser.storage.local:', typeof browser?.storage?.local);
         
         loadSettings().then(() => {
-            console.log('✅ Popup initialized with browser.storage');
         }).catch(error => {
-            console.error('❌ Failed to initialize popup:', error);
         });
     </script>
 </body>

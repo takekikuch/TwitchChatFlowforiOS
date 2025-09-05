@@ -1,35 +1,30 @@
-// Background script for Twitch Chat Flow Safari Extension
+// Background script for Danmaku Flow Chat Safari Extension
 
 // Extension installed/enabled
 browser.runtime.onInstalled.addListener(() => {
-    console.log('Twitch Chat Flow Extension installed');
+    // Extension installed
 });
 
 // Handle extension startup
 browser.runtime.onStartup.addListener(() => {
-    console.log('Twitch Chat Flow Extension started');
+    // Extension started
 });
 
 // Handle action click (標準WebExtensionパターン)
 browser.action.onClicked.addListener(async (tab) => {
-    console.log('🎯 Extension action clicked on tab:', tab.url);
     
     if (tab.url && tab.url.includes('twitch.tv')) {
-        console.log('📨 Sending message to content script to show settings popup');
         try {
             const response = await browser.tabs.sendMessage(tab.id, {
                 action: 'showSettingsPopup'
             });
-            console.log('✅ Message sent successfully:', response);
         } catch (error) {
-            console.log('❌ Could not send message to content script:', error);
             // フォールバック: 新しいタブで設定を開く
             browser.tabs.create({
                 url: browser.runtime.getURL('Resources/popup.html')
             });
         }
     } else {
-        console.log('ℹ️ Not on Twitch, opening settings in new tab');
         browser.tabs.create({
             url: browser.runtime.getURL('Resources/popup.html')
         });

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Twitch Chat Flow",
+  "name": "Danmaku Flow Chat",
   "version": "1.0.0",
   "description": "Displays Twitch chat comments like Niconico-style danmaku flowing from right to left",
   
@@ -34,7 +34,7 @@
   }],
   
   "action": {
-    "default_title": "Twitch Chat Flow",
+    "default_title": "Danmaku Flow Chat",
     "default_icon": {
       "16": "images/icon-16.png",
       "48": "images/icon-48.png", 

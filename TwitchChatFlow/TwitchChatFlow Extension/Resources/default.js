@@ -1,4 +1,4 @@
-console.log('🎯 Twitch Chat Flow: Default.js loaded!');
+// Danmaku Flow Chat: Default.js loaded
 
 if (typeof window._twitchChatDanmaku === 'undefined') {
 	window._twitchChatDanmaku = {};
@@ -42,7 +42,6 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 		const containerWidth = $container?.offsetWidth || 854;
 		maxStack = Math.max(Math.floor(containerHeight / lineHeight * percent), 1);
 		$container?.style.setProperty('--width', `${containerWidth}px`);
-		console.log('📏 MaxStack calculated:', { danmakuDensity, percent: Math.round(percent * 100) + '%', maxStack });
 	}
 
 	window.addEventListener('resize', calculateMaxStack);
@@ -66,7 +65,6 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 		
 		// 非表示モードで空きスタックがない場合は非表示
 		if (settings?.commentOverflow === 'hide' && !foundEmptyStack) {
-			console.log('🚫 Comment hidden - no available stack (hide mode)');
 			return null;
 		}
 		
@@ -138,7 +136,6 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 			$container = $el;
 			settings = userSettings;
 			applyUserSettings();
-			console.log('🎯 Danmaku container initialized:', $container);
 		},
 
 		onSettingsChange(userSettings) {
@@ -147,22 +144,16 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 		},
 
 		onDanmaku($username, $message) {
-			console.log('🎬 onDanmaku called with:', { username: $username, message: $message });
-			console.log('🎬 Settings enabled:', settings?.enabled);
-			console.log('🎬 Container exists:', !!$container);
 			
 			if (!settings?.enabled) {
-				console.log('❌ Settings not enabled, aborting danmaku');
 				return;
 			}
 			if ($message?.querySelector('.chat-line__message--deleted-notice') || $username?.querySelector('.chat-line__message--deleted-notice')) {
-				console.log('❌ Deleted message detected, aborting danmaku');
 				return;
 			}
 			
 			// コメント遅延処理
 			const delayMs = (settings?.delay || 0) * 1000;
-			console.log('⏰ Comment delay:', settings?.delay || 0, 'seconds');
 			
 			const showDanmaku = () => {
 				const $chat = document.createElement('div');
@@ -183,11 +174,8 @@ if (typeof window._twitchChatDanmaku === 'undefined') {
 
 				const stack = getProperStack($chat);
 				if (stack === null) {
-					console.log('🚫 Danmaku hidden due to overflow settings');
 					return;
 				}
-				console.log('🎨 Creating danmaku element, stack:', stack);
-				console.log('🎨 Danmaku element:', $chat);
 
 				$container.appendChild($chat);
 

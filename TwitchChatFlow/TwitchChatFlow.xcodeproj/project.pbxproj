@@ -390,7 +390,7 @@
 				DEVELOPMENT_TEAM = MDH8A45XTP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "TwitchChatFlow Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "TwitchChatFlow Extension";
+				INFOPLIST_KEY_CFBundleDisplayName = "Danmaku Flow Chat";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -420,7 +420,7 @@
 				DEVELOPMENT_TEAM = MDH8A45XTP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "TwitchChatFlow Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "TwitchChatFlow Extension";
+				INFOPLIST_KEY_CFBundleDisplayName = "Danmaku Flow Chat";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -445,7 +445,7 @@
 		49B88D112E4F958A0023FD3E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_liquid;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -453,7 +453,7 @@
 				DEVELOPMENT_TEAM = MDH8A45XTP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TwitchChatFlow/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Twitch Chat Flow";
+				INFOPLIST_KEY_CFBundleDisplayName = "Danmaku Flow Chat";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -484,7 +484,7 @@
 		49B88D122E4F958A0023FD3E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_liquid;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -492,7 +492,7 @@
 				DEVELOPMENT_TEAM = MDH8A45XTP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TwitchChatFlow/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Twitch Chat Flow";
+				INFOPLIST_KEY_CFBundleDisplayName = "Danmaku Flow Chat";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

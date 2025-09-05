@@ -1,5 +1,5 @@
 (() => {
-	console.log('🎉 Twitch Chat Flow: Extension loaded!');
+	// Danmaku Flow Chat: Extension loaded
 	
 	// 擬似フルスクリーン関連の変数
 	let isPseudoFullscreen = false;
@@ -25,30 +25,24 @@
 	
 	// background scriptからのメッセージリスナー (標準WebExtensionパターン)
 	browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-		console.log('📨 Message received from background script:', message);
 		
 		if (message.action === 'showSettingsPopup') {
-			console.log('🔧 Creating settings popup from message');
 			try {
 				showGlobalSettingsPopup();
 				sendResponse({ success: true, message: 'Settings popup created successfully' });
 			} catch (error) {
-				console.error('❌ Error creating settings popup:', error);
 				sendResponse({ success: false, error: error.message });
 			}
 		} else if (message.action === 'updateSettings') {
-			console.log('⚙️ Settings update received:', message.settings);
 			try {
 				// グローバル設定を更新
 				Object.assign(settings, message.settings);
 				// コアエンジンに設定変更を通知
 				if (core && core.onSettingsChange) {
 					core.onSettingsChange(settings);
-					console.log('✅ Settings applied to danmaku engine');
 				}
 				sendResponse({ success: true, message: 'Settings updated successfully' });
 			} catch (error) {
-				console.error('❌ Error updating settings:', error);
 				sendResponse({ success: false, error: error.message });
 			}
 		}
@@ -59,8 +53,7 @@
 	
 	// グローバル設定ポップアップ表示関数（iOS Safari Extension対応）
 	window.showGlobalSettingsPopup = async () => {
-		console.log('🔧 Creating global settings popup');
-		
+			
 		// 既存のグローバルポップアップを削除
 		const existingPopup = document.querySelector('#twitch-chat-flow-global-popup');
 		if (existingPopup) {
@@ -100,9 +93,7 @@
 			settings.fontWeight = result.twitchChatFlowFontWeight;
 			settings.commentOverflow = result.twitchChatFlowCommentOverflow;
 			settings.delay = result.twitchChatFlowDelay;
-			console.log('📖 Settings loaded from browser.storage for popup:', settings);
 		} catch (error) {
-			console.log('📝 Using default settings for global popup:', error);
 		}
 		
 		// 背景オーバーレイ
@@ -140,7 +131,7 @@
 		
 		popup.innerHTML = `
 			<div style="color: white; margin-bottom: 20px;">
-				<h2 style="margin: 0; font-size: 18px; font-weight: 600;">Twitch Chat Flow 設定</h2>
+				<h2 style="margin: 0; font-size: 18px; font-weight: 600;">Danmaku Flow Chat 設定</h2>
 				<p style="margin: 5px 0 0 0; font-size: 14px; color: #a0a0a3;">ニコニコ動画風コメント表示</p>
 			</div>
 			
@@ -295,15 +286,12 @@
 					twitchChatFlowCommentOverflow: settings.commentOverflow,
 					twitchChatFlowDelay: settings.delay
 				});
-				console.log('💾 Global settings saved to browser.storage:', settings);
 				
 				// コアエンジンに設定変更を通知
 				if (core && core.onSettingsChange) {
 					core.onSettingsChange(settings);
-					console.log('✅ Settings applied to danmaku engine from popup');
 				}
 			} catch (error) {
-				console.error('❌ Failed to save global settings:', error);
 			}
 		};
 		
@@ -375,7 +363,6 @@
 			}
 		});
 		
-		console.log('✅ Global settings popup created and displayed');
 	};
 	
 	const VIDEO_CONTAINER_SELECTORS = [
@@ -462,16 +449,12 @@
 	};
 
 	const getVideoContainer = () => {
-		console.log('🎬 Looking for video container...');
 		return getElementsBySelectors(VIDEO_CONTAINER_SELECTORS).then($els => {
-			console.log('🎬 Video container found:', $els[0]);
 			return $els[0];
 		});
 	};
 	const getChatContainer = () => {
-		console.log('💬 Looking for chat container...');
 		return getElementsBySelectors(CHAT_CONTAINER_SELECTORS).then($els => {
-			console.log('💬 Chat container found:', $els[0]);
 			return $els[0];
 		});
 	};
@@ -501,14 +484,12 @@
 				settings.commentOverflow = result.twitchChatFlowCommentOverflow;
 				settings.delay = result.twitchChatFlowDelay;
 				
-				console.log('📖 Settings loaded from browser.storage:', settings);
 				
 				// コアエンジンに設定変更を通知
 				if (core && core.onSettingsChange) {
 					core.onSettingsChange(settings);
 				}
 			} catch (error) {
-				console.log('📝 Using default settings:', error);
 			}
 		};
 		
@@ -520,7 +501,6 @@
 			if (namespace === 'local') {
 				const relevantChanges = Object.keys(changes).filter(key => key.startsWith('twitchChatFlow'));
 				if (relevantChanges.length > 0) {
-					console.log('⚙️ Storage changed, reloading settings...', changes);
 					loadSettings();
 				}
 			}
@@ -534,54 +514,35 @@
 			const chatWorking = $chat && document.body.contains($chat);
 			const allWorking = containerWorking && videoWorking && chatWorking;
 			
-			console.log('🔧 isDanmakuWorking check:', {
-				container: containerWorking,
-				video: videoWorking,
-				chat: chatWorking,
-				overall: allWorking,
-				containerElement: currentContainer
-			});
 			
 			return allWorking;
 		};
 
 		const getUnprocessedChats = () => {
-			console.log('🔍 Looking for unprocessed chat messages...');
 			return waitUntil(() => getElementsBySelectors(RAW_CHAT_SELECTORS, $chat)).then(chats => {
-				console.log('📨 Found', chats.length, 'unprocessed chat messages:', chats);
 				return chats;
 			});
 		};
 
 		const processChat = async ($chat) => {
-			console.log('📝 Processing chat element:', $chat);
 			$chat.setAttribute('data-danmaku-ready', true);
 			
 			const $username = (await getElementsBySelectors(CHAT_USERNAME_SELECTORS, $chat))[0];
 			const $message = (await getElementsBySelectors(CHAT_MESSAGE_SELECTORS, $chat))[0];
 
-			console.log('👤 Username element found:', $username);
-			console.log('💬 Message element found:', $message);
 			
 			if ($username && $message) {
 				const usernameText = $username.textContent || $username.innerText;
 				const messageText = $message.textContent || $message.innerText;
-				console.log('👤 New message from:', usernameText);
-				console.log('💬 Message:', messageText);
 				core?.onDanmaku?.($username.cloneNode(true), $message.cloneNode(true));
 			} else {
-				console.log('❌ Failed to find username or message in chat element');
 			}
 		}
 
 		const getCore = async () => {
-			console.log('⚙️ Looking for core...', settings.mode);
-			console.log('⚙️ window._twitchChatDanmaku:', window._twitchChatDanmaku);
 			try {
 				core = await waitUntil(() => window._twitchChatDanmaku?.[settings.mode], { timeout: 5000 });
-				console.log('✅ Core found:', core);
 			} catch (ex) {
-				console.error('❌ TwitchChatDanmaku: core not found, abort!', ex);
 			}
 			return core;
 		}
@@ -608,17 +569,14 @@
 		let originalNextSibling = null;
 
 		const enterPseudoFullscreen = () => {
-			console.log('🖥️ Entering pseudo fullscreen mode');
 			
 			if (isPseudoFullscreen) return;
 			
 			const playerContainer = document.querySelector(PLAYER_SELECTORS.join(','));
 			if (!playerContainer) {
-				console.error('❌ Player container not found');
 				return;
 			}
 			
-			console.log('🎯 Found player container:', playerContainer);
 			
 			// 現在の親要素と位置を保存
 			originalParent = playerContainer.parentNode;
@@ -645,7 +603,6 @@
 				padding: document.body.style.padding || ''
 			};
 			
-			console.log('📱 Creating fullscreen wrapper at body level');
 			
 			// bodyの直下にフルスクリーンラッパーを作成
 			fullscreenWrapper = document.createElement('div');
@@ -693,22 +650,18 @@
 				video.style.setProperty('width', '100%', 'important');
 				video.style.setProperty('height', '100%', 'important');
 				video.style.setProperty('object-fit', 'contain', 'important');
-				console.log('📺 Video element adjusted');
 			}
 			
 			isPseudoFullscreen = true;
-			console.log('✅ Pseudo fullscreen mode activated with body-level wrapper');
 		};
 		
 		const exitPseudoFullscreen = () => {
-			console.log('🔽 Exiting pseudo fullscreen mode');
 			
 			if (!isPseudoFullscreen) return;
 			
 			const playerContainer = document.querySelector(PLAYER_SELECTORS.join(','));
 			if (playerContainer && originalParent && fullscreenWrapper) {
 				// プレイヤーコンテナを元の位置に戻す
-				console.log('📱 Restoring player container to original position');
 				if (originalNextSibling) {
 					originalParent.insertBefore(playerContainer, originalNextSibling);
 				} else {
@@ -745,14 +698,12 @@
 					video.style.removeProperty('width');
 					video.style.removeProperty('height');
 					video.style.removeProperty('object-fit');
-					console.log('📺 Video element style reset');
-				}
+					}
 			}
 			
 			// フルスクリーンラッパーを削除
 			if (fullscreenWrapper && fullscreenWrapper.parentNode) {
 				fullscreenWrapper.parentNode.removeChild(fullscreenWrapper);
-				console.log('🗑️ Fullscreen wrapper removed');
 			}
 			
 			// ページスタイルを復元
@@ -774,7 +725,6 @@
 			
 			isPseudoFullscreen = false;
 			
-			console.log('✅ Pseudo fullscreen mode deactivated and DOM restored');
 		};
 		
 		const togglePseudoFullscreen = () => {
@@ -791,7 +741,6 @@
 			fullscreenButtons.forEach(button => {
 				if (button.dataset.tcfOverridden) return;
 				
-				console.log('🔄 Overriding fullscreen button:', button);
 				button.dataset.tcfOverridden = 'true';
 				
 				// 既存のイベントリスナーを削除
@@ -816,7 +765,6 @@
 		
 		// フルスクリーンボタンの監視と初期化
 		const initPseudoFullscreen = () => {
-			console.log('🖥️ Initializing pseudo fullscreen feature');
 			
 			// ESCキーイベントリスナーを追加
 			document.addEventListener('keydown', handleKeydown, true);
@@ -827,7 +775,6 @@
 			// 初回実行
 			setTimeout(overrideFullscreenButtons, 1000);
 			
-			console.log('✅ Pseudo fullscreen feature initialized');
 		};
 
 		// styleタグを常に挿入して全体の高さを150%に設定
@@ -840,10 +787,8 @@
 		`;
 		document.head.appendChild(scrollStyle);
 
-		console.log('🚀 Starting main loop...');
 		await getCore();
 		if (!core) {
-			console.error('❌ TwitchChatDanmaku: core not found, abort!');
 			return;
 		}
 
@@ -851,12 +796,9 @@
 		initPseudoFullscreen();
 
 		const reset = async () => {
-			console.log('🗑️ RESET called - removing existing containers');
 			const existingContainers = [...document.querySelectorAll('#danmaku-container')];
-			console.log('🗑️ Found', existingContainers.length, 'existing containers to remove');
 			await getCore();
 			existingContainers.forEach($el => {
-				console.log('🗑️ Removing container:', $el);
 				$el.remove();
 			});
 		};
@@ -869,7 +811,6 @@
 			$danmakuContainer.setAttribute('id', 'danmaku-container');
 			$danmakuContainer.setAttribute('data-danmaku-mode', settings.mode);
 			$video.appendChild($danmakuContainer);
-			console.log('✅ New danmaku container created and added to video:', $danmakuContainer);
 			
 			
 			core?.init?.($danmakuContainer, settings);
@@ -886,18 +827,13 @@
 		}
 
 		// メインループ
-		console.log('🔄 Starting main monitoring loop...');
 		while (true) {
 			if (await waitUntil(() => !isDanmakuWorking(), { interval: 3000 })) {
-				console.log('🔄 Danmaku not working, reinitializing...');
 				$chat = await getChatContainer();
 				$video = await getVideoContainer();
 
 				if (document.body.contains($chat) && document.body.contains($video)) {
-					console.log('✅ Both containers found, initializing danmaku...');
 					await initDanmakuContainer();
-				} else {
-					console.log('❌ Containers not found in DOM');
 				}
 			}
 		}

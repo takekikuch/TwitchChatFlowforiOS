@@ -1,0 +1,102 @@
+{
+  "extensionName": {
+    "message": "Danmaku Flow Chat"
+  },
+  "extensionDescription": {
+    "message": "Displays Twitch chat comments like Niconico-style danmaku flowing from right to left"
+  },
+  "extensionTitle": {
+    "message": "Danmaku Flow Chat"
+  },
+
+  "appSubtitle": {
+    "message": "Niconico-style Comment Display"
+  },
+  "enableDanmaku": {
+    "message": "Enable danmaku display"
+  },
+  "fontSize": {
+    "message": "Font size"
+  },
+  "displayDuration": {
+    "message": "Display duration"
+  },
+  "shadowOpacity": {
+    "message": "Shadow opacity"
+  },
+  "textOpacity": {
+    "message": "Text opacity"
+  },
+  "fontWeight": {
+    "message": "Font weight"
+  },
+  "commentDensity": {
+    "message": "When comment density is high:"
+  },
+  "overlapDisplay": {
+    "message": "Overlap display"
+  },
+  "hideComments": {
+    "message": "Hide"
+  },
+  "commentDelay": {
+    "message": "Comment delay"
+  },
+
+  "sizeSmall": {
+    "message": "Small"
+  },
+  "sizeLarge": {
+    "message": "Large"
+  },
+  "durationShort": {
+    "message": "Short"
+  },
+  "durationLong": {
+    "message": "Long"
+  },
+  "opacityTransparent": {
+    "message": "Transparent"
+  },
+  "opacityOpaque": {
+    "message": "Opaque"
+  },
+  "opacityLight": {
+    "message": "Light"
+  },
+  "opacityDark": {
+    "message": "Dark"
+  },
+  "weightThin": {
+    "message": "Thin"
+  },
+  "weightBold": {
+    "message": "Bold"
+  },
+  "delayImmediate": {
+    "message": "Immediate"
+  },
+  "delay30Seconds": {
+    "message": "30 sec"
+  },
+
+  "statusEnabled": {
+    "message": "Danmaku display is enabled"
+  },
+  "statusDisabled": {
+    "message": "Danmaku display is disabled"
+  },
+  "openTwitch": {
+    "message": "Open Twitch"
+  },
+
+  "unitPixels": {
+    "message": "px"
+  },
+  "unitSeconds": {
+    "message": "sec"
+  },
+  "unitPercent": {
+    "message": "%"
+  }
+}

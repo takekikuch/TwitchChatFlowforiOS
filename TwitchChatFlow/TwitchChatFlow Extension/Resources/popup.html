@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danmaku Flow Chat</title>
+    <title></title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -185,12 +185,12 @@
 </head>
 <body>
     <div class="header">
-        <h1>Danmaku Flow Chat</h1>
-        <p>ニコニコ動画風コメント表示</p>
+        <h1 data-i18n="extensionName">Danmaku Flow Chat</h1>
+        <p data-i18n="appSubtitle">Niconico-style Comment Display</p>
     </div>
     
     <div class="control-group">
-        <label for="enableToggle">弾幕表示を有効にする</label>
+        <label for="enableToggle" data-i18n="enableDanmaku">Enable danmaku display</label>
         <label class="toggle-switch">
             <input type="checkbox" id="enableToggle" checked>
             <span class="slider"></span>
@@ -198,79 +198,79 @@
     </div>
     
     <div class="control-group">
-        <label for="fontSizeSlider">文字サイズ: <span id="fontSizeValue">24</span>px</label>
+        <label for="fontSizeSlider"><span data-i18n="fontSize">Font size</span>: <span id="fontSizeValue">24</span><span data-i18n="unitPixels">px</span></label>
         <input type="range" id="fontSizeSlider" min="12" max="48" value="24" step="2">
         <div class="slider-labels">
-            <span>小</span>
-            <span>大</span>
+            <span data-i18n="sizeSmall">Small</span>
+            <span data-i18n="sizeLarge">Large</span>
         </div>
     </div>
     
     <div class="control-group">
-        <label for="durationSlider">表示時間: <span id="durationValue">7</span>秒</label>
+        <label for="durationSlider"><span data-i18n="displayDuration">Display duration</span>: <span id="durationValue">7</span> <span data-i18n="unitSeconds">sec</span></label>
         <input type="range" id="durationSlider" min="3" max="15" value="7" step="1">
         <div class="slider-labels">
-            <span>短</span>
-            <span>長</span>
+            <span data-i18n="durationShort">Short</span>
+            <span data-i18n="durationLong">Long</span>
         </div>
     </div>
     
     <div class="control-group">
-        <label for="shadowOpacitySlider">文字影の透明度: <span id="shadowOpacityValue">80</span>%</label>
+        <label for="shadowOpacitySlider"><span data-i18n="shadowOpacity">Shadow opacity</span>: <span id="shadowOpacityValue">80</span><span data-i18n="unitPercent">%</span></label>
         <input type="range" id="shadowOpacitySlider" min="0" max="100" value="80" step="5">
         <div class="slider-labels">
-            <span>透明</span>
-            <span>濃い</span>
+            <span data-i18n="opacityTransparent">Transparent</span>
+            <span data-i18n="opacityOpaque">Opaque</span>
         </div>
     </div>
     
     <div class="control-group">
-        <label for="textOpacitySlider">文字の透明度: <span id="textOpacityValue">100</span>%</label>
+        <label for="textOpacitySlider"><span data-i18n="textOpacity">Text opacity</span>: <span id="textOpacityValue">100</span><span data-i18n="unitPercent">%</span></label>
         <input type="range" id="textOpacitySlider" min="10" max="100" value="100" step="5">
         <div class="slider-labels">
-            <span>薄い</span>
-            <span>濃い</span>
+            <span data-i18n="opacityLight">Light</span>
+            <span data-i18n="opacityDark">Dark</span>
         </div>
     </div>
     
     <div class="control-group">
-        <label for="fontWeightSlider">文字の太さ: <span id="fontWeightValue">400</span></label>
+        <label for="fontWeightSlider"><span data-i18n="fontWeight">Font weight</span>: <span id="fontWeightValue">400</span></label>
         <input type="range" id="fontWeightSlider" min="100" max="900" value="400" step="100">
         <div class="slider-labels">
-            <span>細</span>
-            <span>太</span>
+            <span data-i18n="weightThin">Thin</span>
+            <span data-i18n="weightBold">Bold</span>
         </div>
     </div>
     
     <div class="control-group">
-        <label>コメント密度が高い時：</label>
+        <label data-i18n="commentDensity">When comment density is high:</label>
         <div class="radio-group">
             <label class="radio-option">
                 <input type="radio" name="commentOverflow" value="overlap" id="overflowOverlap" checked>
-                <span class="radio-label">重ねて表示</span>
+                <span class="radio-label" data-i18n="overlapDisplay">Overlap display</span>
             </label>
             <label class="radio-option">
                 <input type="radio" name="commentOverflow" value="hide" id="overflowHide">
-                <span class="radio-label">非表示</span>
+                <span class="radio-label" data-i18n="hideComments">Hide</span>
             </label>
         </div>
     </div>
     
     <div class="control-group">
-        <label for="delaySlider">コメント遅延: <span id="delayValue">0</span>秒</label>
+        <label for="delaySlider"><span data-i18n="commentDelay">Comment delay</span>: <span id="delayValue">0</span> <span data-i18n="unitSeconds">sec</span></label>
         <input type="range" id="delaySlider" min="0" max="30" value="0" step="1">
         <div class="slider-labels">
-            <span>即時</span>
-            <span>30秒</span>
+            <span data-i18n="delayImmediate">Immediate</span>
+            <span data-i18n="delay30Seconds">30 sec</span>
         </div>
     </div>
     
-    <div class="status enabled" id="status">
-        弾幕表示が有効です
+    <div class="status enabled" id="status" data-i18n="statusEnabled">
+        Danmaku display is enabled
     </div>
-    
+
     <div class="link">
-        <a href="https://www.twitch.tv" target="_blank">Twitchを開く</a>
+        <a href="https://www.twitch.tv" target="_blank" data-i18n="openTwitch">Open Twitch</a>
     </div>
     
     <script>
@@ -460,16 +460,35 @@
         
         function updateStatus(enabled) {
             if (enabled) {
-                status.textContent = '弾幕表示が有効です';
+                status.textContent = browser.i18n.getMessage('statusEnabled');
                 status.className = 'status enabled';
             } else {
-                status.textContent = '弾幕表示が無効です';
+                status.textContent = browser.i18n.getMessage('statusDisabled');
                 status.className = 'status disabled';
             }
         }
         
-        // 初期化
-        
+        // Initialize i18n
+        function initializeI18n() {
+            // Set document language
+            document.documentElement.lang = browser.i18n.getUILanguage();
+
+            // Set page title
+            document.title = browser.i18n.getMessage('extensionName');
+
+            // Update all elements with data-i18n attributes
+            const i18nElements = document.querySelectorAll('[data-i18n]');
+            i18nElements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const message = browser.i18n.getMessage(key);
+                if (message) {
+                    element.textContent = message;
+                }
+            });
+        }
+
+        // Initialize
+        initializeI18n();
         loadSettings().then(() => {
         }).catch(error => {
         });

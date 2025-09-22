@@ -1,0 +1,102 @@
+{
+  "extensionName": {
+    "message": "Danmaku Flow Chat"
+  },
+  "extensionDescription": {
+    "message": "Twitchのチャットコメントをニコニコ動画風の弾幕として右から左に流して表示します"
+  },
+  "extensionTitle": {
+    "message": "Danmaku Flow Chat"
+  },
+
+  "appSubtitle": {
+    "message": "ニコニコ動画風コメント表示"
+  },
+  "enableDanmaku": {
+    "message": "弾幕表示を有効にする"
+  },
+  "fontSize": {
+    "message": "文字サイズ"
+  },
+  "displayDuration": {
+    "message": "表示時間"
+  },
+  "shadowOpacity": {
+    "message": "文字影の透明度"
+  },
+  "textOpacity": {
+    "message": "文字の透明度"
+  },
+  "fontWeight": {
+    "message": "文字の太さ"
+  },
+  "commentDensity": {
+    "message": "コメント密度が高い時："
+  },
+  "overlapDisplay": {
+    "message": "重ねて表示"
+  },
+  "hideComments": {
+    "message": "非表示"
+  },
+  "commentDelay": {
+    "message": "コメント遅延"
+  },
+
+  "sizeSmall": {
+    "message": "小"
+  },
+  "sizeLarge": {
+    "message": "大"
+  },
+  "durationShort": {
+    "message": "短"
+  },
+  "durationLong": {
+    "message": "長"
+  },
+  "opacityTransparent": {
+    "message": "透明"
+  },
+  "opacityOpaque": {
+    "message": "濃い"
+  },
+  "opacityLight": {
+    "message": "薄い"
+  },
+  "opacityDark": {
+    "message": "濃い"
+  },
+  "weightThin": {
+    "message": "細"
+  },
+  "weightBold": {
+    "message": "太"
+  },
+  "delayImmediate": {
+    "message": "即時"
+  },
+  "delay30Seconds": {
+    "message": "30秒"
+  },
+
+  "statusEnabled": {
+    "message": "弾幕表示が有効です"
+  },
+  "statusDisabled": {
+    "message": "弾幕表示が無効です"
+  },
+  "openTwitch": {
+    "message": "Twitchを開く"
+  },
+
+  "unitPixels": {
+    "message": "px"
+  },
+  "unitSeconds": {
+    "message": "秒"
+  },
+  "unitPercent": {
+    "message": "%"
+  }
+}

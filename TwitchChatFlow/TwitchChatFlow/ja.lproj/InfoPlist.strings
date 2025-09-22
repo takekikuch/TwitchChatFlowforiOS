@@ -1,0 +1,13 @@
+/*
+  InfoPlist.strings
+  TwitchChatFlow
+
+  Japanese localization for app name and descriptions
+*/
+
+/* App name */
+"CFBundleName" = "Danmaku Flow Chat";
+"CFBundleDisplayName" = "Danmaku Flow Chat";
+
+/* App description */
+"NSHumanReadableCopyright" = "© 2024 Danmaku Flow Chat";

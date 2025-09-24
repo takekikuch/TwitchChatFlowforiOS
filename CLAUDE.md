@@ -56,18 +56,62 @@ const CHAT_CONTAINER_SELECTORS = [
 
 ### 設定システム
 
+**⚠️ 重要**: この拡張機能は **2つの異なるポップアップシステム** を使用している
+
+#### 1. popup.html（標準WebExtensionポップアップ）
+- **ファイル**: `Resources/popup.html`
+- **用途**: フォールバック用＋非Twitchページでの設定画面
+- **表示方法**: 新しいタブで開く (`browser.tabs.create`)
+- **実装**: `browser.i18n.getMessage()`による完全国際化対応
+- **動作環境**: 標準的なWebExtension環境全般
+
+#### 2. content.js内の動的ポップアップ（カスタム実装）
+- **ファイル**: `content.js` の `showGlobalSettingsPopup()` 関数
+- **用途**: **メインの設定UI** - Twitchページ上に直接オーバーレイ表示
+- **表示方法**: JavaScriptで動的にHTML生成してTwitchページに注入
+- **実装**: `browser.i18n.getMessage()`による完全国際化対応
+- **動作環境**: 主にSafari iOS Extension向け
+
+#### ポップアップ選択ロジック（background.js）
+
+```javascript
+browser.action.onClicked.addListener(async (tab) => {
+    if (tab.url && tab.url.includes('twitch.tv')) {
+        try {
+            // メイン: content.js内のカスタムポップアップを表示
+            await browser.tabs.sendMessage(tab.id, {
+                action: 'showSettingsPopup'
+            });
+        } catch (error) {
+            // フォールバック: popup.htmlを新しいタブで開く
+            browser.tabs.create({
+                url: browser.runtime.getURL('Resources/popup.html')
+            });
+        }
+    } else {
+        // Twitch以外: popup.htmlを新しいタブで開く
+        browser.tabs.create({
+            url: browser.runtime.getURL('Resources/popup.html')
+        });
+    }
+});
+```
+
+#### 設定データ管理
+
 - **browser.storage.local** ベースの永続化（Safari Extension制約によりlocalStorageは共有されない）
-- **ポップアップUI**: 拡張機能アイコンタップで表示、設定即座反映
-- **メッセージング**: ポップアップ ↔ コンテンツスクリプト間で設定同期
+- **設定同期**: 両方のポップアップが同一の設定データを参照・更新
+- **メッセージング**: `browser.tabs.sendMessage`でポップアップ↔コンテンツスクリプト間通信
 - デフォルト設定: `fontSize: 24, duration: 7, opacity: 1, danmakuDensity: 2`
 - CSSカスタムプロパティ経由でリアルタイム反映
 
 ### 重要なアーキテクチャ決定
 
-**ポップアップ表示方式**:
-- `manifest.json` で `default_popup` は設定しない
-- `browser.action.onClicked` イベントでコンテンツスクリプト内のポップアップを表示
-- これによりSafari ExtensionのiOS制約を回避
+**なぜ2つのポップアップシステムが必要なのか**:
+1. **Safari iOS Extensionの制約**: 標準的な`default_popup`が正しく動作しない場合がある
+2. **Twitch統合**: Twitchページ上で直接設定を変更したいユーザー体験
+3. **互換性**: 他のブラウザ環境でも確実に動作させるためのフォールバック
+4. **`manifest.json`で`default_popup`は意図的に設定しない**: カスタム実装を優先
 
 ## 開発時の注意点
 

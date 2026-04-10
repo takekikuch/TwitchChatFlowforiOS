@@ -162,7 +162,7 @@
   position: absolute !important;
   left: 0 !important;
   right: 0 !important;
-  bottom: 0 !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
   z-index: 10002 !important;
 }
 
@@ -171,7 +171,7 @@
 }
 
 .tcf-pseudo-fullscreen .player-controls__right-control-group {
-  padding-right: 0 !important;
+  padding-right: calc(env(safe-area-inset-right, 0px) + 8px) !important;
 }
 
 .tcf-pseudo-fullscreen #danmaku-container[data-danmaku-mode=default] .danmaku-chat .danmaku-message {

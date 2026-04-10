@@ -372,6 +372,34 @@
 		'.video-chat__message-list-wrapper',
 		'.chat-list--default'
 	];
+	const PLAYER_ROOT_SELECTORS = [
+		'.video-player__default-player',
+		'[data-test-selector="video-player__container"]',
+		'.video-player__container',
+		'.video-player'
+	];
+	const FULLSCREEN_BUTTON_SELECTORS = [
+		'[data-a-target="player-fullscreen-button"]',
+		'button[aria-label*="フルスクリーン"]',
+		'button[aria-label*="fullscreen"]',
+		'button[aria-label*="Fullscreen"]',
+		'button[aria-label*="全画面"]'
+	];
+	const VIDEO_SURFACE_SELECTORS = [
+		'[data-a-target="video-player"]',
+		'.video-player',
+		'.video-player__container',
+		'.playerContainerMWeb--WuAj6'
+	];
+	const PSEUDO_FULLSCREEN_CLASS = 'tcf-pseudo-fullscreen';
+	const PSEUDO_FULLSCREEN_SURFACE_CLASS = 'tcf-pseudo-fullscreen-surface';
+	const PSEUDO_FULLSCREEN_OBSERVER_SELECTORS = [
+		'.player-controls',
+		'.player-controls__right-control-group',
+		'[data-a-target="player-overlay-click-handler"]',
+		'[class*="toggleControls--"]',
+		...FULLSCREEN_BUTTON_SELECTORS
+	];
 
 	const RAW_CHAT_SELECTORS = [
 		'[data-test-selector="chat-line-message"]',
@@ -542,6 +570,294 @@
 			return core;
 		}
 
+		let pseudoFullscreenActive = false;
+		let pseudoFullscreenRoot = null;
+		let pseudoFullscreenListenersBound = false;
+		let pseudoFullscreenObserver = null;
+		let pseudoFullscreenObserverRoot = null;
+		let pseudoFullscreenRetryTimers = [];
+		let fullscreenVideo = null;
+		let pseudoFullscreenSurface = null;
+		let pseudoFullscreenToggleStamp = 0;
+
+		const getViewportMetrics = () => {
+			const viewport = window.visualViewport;
+			return {
+				width: Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 0),
+				height: Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0),
+				top: Math.round(viewport?.offsetTop || 0),
+				left: Math.round(viewport?.offsetLeft || 0)
+			};
+		};
+
+		const getFullscreenButton = () => {
+			const searchRoot = $video && document.body.contains($video) ? $video.closest(PLAYER_ROOT_SELECTORS.join(',')) || document : document;
+			return searchRoot.querySelector(FULLSCREEN_BUTTON_SELECTORS.join(',')) || document.querySelector(FULLSCREEN_BUTTON_SELECTORS.join(','));
+		};
+
+		const findPseudoFullscreenContainerFrom = (startElement) => {
+			for (let element = startElement; element && element !== document.body; element = element.parentElement) {
+				const hasVideo = Boolean(element.querySelector('video'));
+				const hasVideoSurface = Boolean(element.querySelector(VIDEO_SURFACE_SELECTORS.join(',')));
+				const hasControllerLayer = Boolean(element.querySelector('.video-player__default-player')) || Boolean(element.querySelector('.player-controls'));
+				if (hasVideo && hasVideoSurface && hasControllerLayer) {
+					return element;
+				}
+			}
+			return null;
+		};
+
+		const getPseudoFullscreenRoot = () => {
+			const fullscreenButton = getFullscreenButton();
+			return fullscreenButton?.closest('.video-player__default-player')
+				|| $video?.closest?.('.video-player__default-player')
+				|| document.querySelector('.video-player__default-player')
+				|| fullscreenButton?.closest(PLAYER_ROOT_SELECTORS.join(','))
+				|| $video?.closest?.(PLAYER_ROOT_SELECTORS.join(','))
+				|| $video?.parentElement
+				|| null;
+		};
+
+		const getPseudoFullscreenSurface = () => {
+			const fullscreenButton = getFullscreenButton();
+			const container = findPseudoFullscreenContainerFrom(fullscreenButton)
+				|| findPseudoFullscreenContainerFrom($video)
+				|| findPseudoFullscreenContainerFrom(document.querySelector('.video-player__default-player'));
+			return container?.querySelector(VIDEO_SURFACE_SELECTORS.join(','))
+				|| $video?.closest?.(VIDEO_SURFACE_SELECTORS.join(','))
+				|| document.querySelector(VIDEO_SURFACE_SELECTORS.join(','))
+				|| null;
+		};
+
+		const clearPseudoFullscreenViewport = (element) => {
+			if (!element) {
+				return;
+			}
+			element.style.removeProperty('--tcf-viewport-width');
+			element.style.removeProperty('--tcf-viewport-height');
+			element.style.removeProperty('--tcf-viewport-top');
+			element.style.removeProperty('--tcf-viewport-left');
+		};
+
+		const applyPseudoFullscreenViewport = () => {
+			if (!pseudoFullscreenActive || !pseudoFullscreenRoot || !document.body.contains(pseudoFullscreenRoot)) {
+				return;
+			}
+
+			const { width, height, top, left } = getViewportMetrics();
+			[pseudoFullscreenSurface, pseudoFullscreenRoot].forEach(element => {
+				if (!element) {
+					return;
+				}
+				element.style.setProperty('--tcf-viewport-width', `${width}px`);
+				element.style.setProperty('--tcf-viewport-height', `${height}px`);
+				element.style.setProperty('--tcf-viewport-top', `${top}px`);
+				element.style.setProperty('--tcf-viewport-left', `${left}px`);
+			});
+		};
+
+		const syncPseudoFullscreenRoot = () => {
+			const nextRoot = getPseudoFullscreenRoot();
+			const nextSurface = getPseudoFullscreenSurface();
+			if (!nextRoot) {
+				return;
+			}
+
+			if (pseudoFullscreenRoot && pseudoFullscreenRoot !== nextRoot) {
+				pseudoFullscreenRoot.classList.remove(PSEUDO_FULLSCREEN_CLASS);
+				clearPseudoFullscreenViewport(pseudoFullscreenRoot);
+			}
+			if (pseudoFullscreenSurface && pseudoFullscreenSurface !== nextSurface) {
+				pseudoFullscreenSurface.classList.remove(PSEUDO_FULLSCREEN_SURFACE_CLASS);
+				clearPseudoFullscreenViewport(pseudoFullscreenSurface);
+			}
+
+			pseudoFullscreenRoot = nextRoot;
+			pseudoFullscreenSurface = nextSurface;
+			if (!pseudoFullscreenActive) {
+				return;
+			}
+
+			pseudoFullscreenSurface?.classList.add(PSEUDO_FULLSCREEN_SURFACE_CLASS);
+			pseudoFullscreenRoot.classList.add(PSEUDO_FULLSCREEN_CLASS);
+			applyPseudoFullscreenViewport();
+		};
+
+		const setPseudoFullscreenActive = (nextState) => {
+			if (nextState) {
+				syncPseudoFullscreenRoot();
+				if (!pseudoFullscreenRoot) {
+					return;
+				}
+				pseudoFullscreenActive = true;
+				pseudoFullscreenSurface?.classList.add(PSEUDO_FULLSCREEN_SURFACE_CLASS);
+				pseudoFullscreenRoot.classList.add(PSEUDO_FULLSCREEN_CLASS);
+				applyPseudoFullscreenViewport();
+			} else {
+				pseudoFullscreenActive = false;
+				pseudoFullscreenSurface?.classList.remove(PSEUDO_FULLSCREEN_SURFACE_CLASS);
+				pseudoFullscreenRoot?.classList.remove(PSEUDO_FULLSCREEN_CLASS);
+				clearPseudoFullscreenViewport(pseudoFullscreenSurface);
+				clearPseudoFullscreenViewport(pseudoFullscreenRoot);
+			}
+		};
+
+		const clearPseudoFullscreenRetryTimers = () => {
+			pseudoFullscreenRetryTimers.forEach(timer => clearTimeout(timer));
+			pseudoFullscreenRetryTimers = [];
+		};
+
+		const ensureFullscreenButtonInterceptor = () => {
+			const fullscreenButton = getFullscreenButton();
+			if (!fullscreenButton) {
+				return;
+			}
+
+			const interceptFullscreen = (event) => {
+				const now = Date.now();
+				if (now - pseudoFullscreenToggleStamp < 250) {
+					event.preventDefault();
+					event.stopPropagation();
+					event.stopImmediatePropagation?.();
+					return;
+				}
+
+				pseudoFullscreenToggleStamp = now;
+				event.preventDefault();
+				event.stopPropagation();
+				event.stopImmediatePropagation?.();
+				setPseudoFullscreenActive(!pseudoFullscreenActive);
+			};
+
+			if (fullscreenButton.dataset.tcfPseudoBound === 'true') {
+				return;
+			}
+
+			fullscreenButton.dataset.tcfPseudoBound = 'true';
+			fullscreenButton.addEventListener('touchend', interceptFullscreen, true);
+			fullscreenButton.addEventListener('pointerup', interceptFullscreen, true);
+			fullscreenButton.addEventListener('click', interceptFullscreen, true);
+		};
+
+		const scheduleEnsureFullscreenButtonInterceptor = (delays = [0, 120, 280, 520, 900]) => {
+			clearPseudoFullscreenRetryTimers();
+			delays.forEach(delay => {
+				const timer = setTimeout(() => {
+					bindPseudoFullscreenVideoListeners();
+					bindPseudoFullscreenObserver();
+					ensureFullscreenButtonInterceptor();
+					syncPseudoFullscreenRoot();
+				}, delay);
+				pseudoFullscreenRetryTimers.push(timer);
+			});
+		};
+
+		const elementMatchesPseudoFullscreenUi = (element) => {
+			if (!(element instanceof Element)) {
+				return false;
+			}
+
+			return PSEUDO_FULLSCREEN_OBSERVER_SELECTORS.some(selector => {
+				try {
+					return element.matches(selector) || Boolean(element.closest(selector)) || Boolean(element.querySelector?.(selector));
+				} catch (error) {
+					return false;
+				}
+			});
+		};
+
+		const bindPseudoFullscreenObserver = () => {
+			const nextRoot = findPseudoFullscreenContainerFrom(getFullscreenButton())
+				|| findPseudoFullscreenContainerFrom($video)
+				|| getPseudoFullscreenRoot();
+			if (!nextRoot || !document.body.contains(nextRoot)) {
+				return;
+			}
+
+			if (pseudoFullscreenObserverRoot === nextRoot && pseudoFullscreenObserver) {
+				return;
+			}
+
+			pseudoFullscreenObserver?.disconnect();
+			pseudoFullscreenObserverRoot = nextRoot;
+			pseudoFullscreenObserver = new MutationObserver((mutations) => {
+				const shouldRebind = mutations.some(mutation => {
+					if (mutation.type === 'attributes') {
+						return elementMatchesPseudoFullscreenUi(mutation.target);
+					}
+
+					return [...mutation.addedNodes, ...mutation.removedNodes].some(node => elementMatchesPseudoFullscreenUi(node));
+				});
+
+				if (!shouldRebind) {
+					return;
+				}
+
+				scheduleEnsureFullscreenButtonInterceptor();
+			});
+			pseudoFullscreenObserver.observe(nextRoot, {
+				subtree: true,
+				childList: true,
+				attributes: true,
+				attributeFilter: ['class', 'style', 'aria-hidden']
+			});
+		};
+
+		const handlePseudoFullscreenViewportChange = () => {
+			bindPseudoFullscreenVideoListeners();
+			bindPseudoFullscreenObserver();
+			syncPseudoFullscreenRoot();
+		};
+
+		const handleNativeFullscreenStateChange = () => {
+			if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+				scheduleEnsureFullscreenButtonInterceptor([0, 180, 420, 760]);
+				handlePseudoFullscreenViewportChange();
+				return;
+			}
+
+			if (pseudoFullscreenActive) {
+				setPseudoFullscreenActive(false);
+			}
+		};
+
+		const bindPseudoFullscreenListeners = () => {
+			if (pseudoFullscreenListenersBound) {
+				return;
+			}
+
+			window.addEventListener('resize', handlePseudoFullscreenViewportChange, true);
+			window.addEventListener('orientationchange', handlePseudoFullscreenViewportChange, true);
+			window.visualViewport?.addEventListener('resize', handlePseudoFullscreenViewportChange);
+			window.visualViewport?.addEventListener('scroll', handlePseudoFullscreenViewportChange);
+			document.addEventListener('fullscreenchange', handleNativeFullscreenStateChange, true);
+			document.addEventListener('webkitfullscreenchange', handleNativeFullscreenStateChange, true);
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape' && pseudoFullscreenActive) {
+					setPseudoFullscreenActive(false);
+				}
+			}, true);
+			pseudoFullscreenListenersBound = true;
+		};
+
+		const bindPseudoFullscreenVideoListeners = () => {
+			const nextVideo = $video?.querySelector('video') || document.querySelector('video');
+			if (!nextVideo || nextVideo === fullscreenVideo) {
+				return;
+			}
+
+			if (fullscreenVideo) {
+				fullscreenVideo.removeEventListener('webkitbeginfullscreen', handleNativeFullscreenStateChange, true);
+				fullscreenVideo.removeEventListener('webkitendfullscreen', handleNativeFullscreenStateChange, true);
+				fullscreenVideo.removeEventListener('webkitpresentationmodechanged', handleNativeFullscreenStateChange, true);
+			}
+
+			fullscreenVideo = nextVideo;
+			fullscreenVideo.addEventListener('webkitbeginfullscreen', handleNativeFullscreenStateChange, true);
+			fullscreenVideo.addEventListener('webkitendfullscreen', handleNativeFullscreenStateChange, true);
+			fullscreenVideo.addEventListener('webkitpresentationmodechanged', handleNativeFullscreenStateChange, true);
+		};
+
 		await getCore();
 		if (!core) {
 			return;
@@ -566,6 +882,12 @@
 			
 			
 			core?.init?.($danmakuContainer, settings);
+			bindPseudoFullscreenListeners();
+			bindPseudoFullscreenVideoListeners();
+			bindPseudoFullscreenObserver();
+			ensureFullscreenButtonInterceptor();
+			scheduleEnsureFullscreenButtonInterceptor([0, 180, 420, 760]);
+			syncPseudoFullscreenRoot();
 
 			(async () => {
 				let $orgContainer = $danmakuContainer;

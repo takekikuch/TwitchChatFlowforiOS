@@ -120,6 +120,14 @@
   max-height: 100% !important;
 }
 
+.tcf-pseudo-fullscreen > .video-player__container,
+.tcf-pseudo-fullscreen > .video-player,
+.tcf-pseudo-fullscreen > .persistent-player,
+.tcf-pseudo-fullscreen > [data-test-selector="video-player__video-container"] {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .tcf-pseudo-fullscreen-surface [data-a-target="video-player"],
 .tcf-pseudo-fullscreen-surface .playerContainerMWeb--WuAj6,
 .tcf-pseudo-fullscreen-surface .video-ref--BLEPn,
@@ -139,7 +147,7 @@
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  z-index: 10001 !important;
+  z-index: 2147483647 !important;
 }
 
 .tcf-pseudo-fullscreen-surface #danmaku-container {
@@ -147,7 +155,7 @@
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  z-index: 10001 !important;
+  z-index: 2147483647 !important;
 }
 
 .tcf-pseudo-fullscreen .player-controls {

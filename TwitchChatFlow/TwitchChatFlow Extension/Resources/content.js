@@ -590,6 +590,9 @@
 		let pseudoFullscreenRetryTimers = [];
 		let fullscreenVideo = null;
 		let fullscreenButtonBound = null;
+		let pseudoFullscreenBodyHost = null;
+		let pseudoFullscreenPlaceholder = null;
+		let pseudoFullscreenMovedContainer = null;
 		let pseudoFullscreenSurface = null;
 		let pseudoFullscreenToggleStamp = 0;
 
@@ -614,8 +617,29 @@
 			return searchRoot.querySelector(FULLSCREEN_BUTTON_SELECTORS.join(',')) || document.querySelector(FULLSCREEN_BUTTON_SELECTORS.join(','));
 		};
 
+		const isPhoneSizedDevice = () => {
+			const screenWidth = Math.round(window.screen?.width || 0);
+			const screenHeight = Math.round(window.screen?.height || 0);
+			const viewportWidth = Math.round(window.visualViewport?.width || window.innerWidth || 0);
+			const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || 0);
+			const shortestScreen = Math.min(screenWidth || Infinity, screenHeight || Infinity);
+			const shortestViewport = Math.min(viewportWidth || Infinity, viewportHeight || Infinity);
+			const coarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? navigator.maxTouchPoints > 0;
+			return /iPhone|iPod/i.test(navigator.userAgent)
+				|| (coarsePointer && shortestScreen < 600)
+				|| (coarsePointer && shortestViewport < 600);
+		};
+
 		const isDesktopTwitchLayout = () => {
 			return Boolean(document.querySelector('.persistent-player')) && !Boolean(document.querySelector('[class*="toggleControls--"]'));
+		};
+
+		const shouldHijackFullscreenButton = () => {
+			return !isDesktopTwitchLayout() || isPhoneSizedDevice();
+		};
+
+		const shouldUseBodyHostedPseudoFullscreen = () => {
+			return isDesktopTwitchLayout() && isPhoneSizedDevice();
 		};
 
 		const findPseudoFullscreenContainerFrom = (startElement) => {
@@ -631,6 +655,10 @@
 		};
 
 		const getPseudoFullscreenRoot = () => {
+			if (shouldUseBodyHostedPseudoFullscreen() && pseudoFullscreenBodyHost) {
+				return pseudoFullscreenBodyHost;
+			}
+
 			const fullscreenButton = getFullscreenButton();
 			return fullscreenButton?.closest('.video-player__default-player')
 				|| $video?.closest?.('.video-player__default-player')
@@ -642,6 +670,15 @@
 		};
 
 		const getPseudoFullscreenSurface = () => {
+			if (shouldUseBodyHostedPseudoFullscreen()) {
+				const moved = pseudoFullscreenMovedContainer
+					|| findPseudoFullscreenContainerFrom(getFullscreenButton())
+					|| findPseudoFullscreenContainerFrom($video);
+				return moved?.querySelector('[data-a-target="video-ref"], .video-ref')
+					|| moved?.querySelector(VIDEO_SURFACE_SELECTORS.join(','))
+					|| null;
+			}
+
 			const fullscreenButton = getFullscreenButton();
 			const container = findPseudoFullscreenContainerFrom(fullscreenButton)
 				|| findPseudoFullscreenContainerFrom($video)
@@ -660,6 +697,47 @@
 			element.style.removeProperty('--tcf-viewport-height');
 			element.style.removeProperty('--tcf-viewport-top');
 			element.style.removeProperty('--tcf-viewport-left');
+		};
+
+		const ensureBodyHostedPseudoFullscreen = () => {
+			if (!shouldUseBodyHostedPseudoFullscreen()) {
+				return;
+			}
+			if (pseudoFullscreenBodyHost && pseudoFullscreenMovedContainer) {
+				return;
+			}
+
+			const moveTarget = findPseudoFullscreenContainerFrom(getFullscreenButton())
+				|| findPseudoFullscreenContainerFrom($video)
+				|| document.querySelector('[data-test-selector="video-player__video-container"], .video-player__container');
+			if (!moveTarget?.parentElement) {
+				return;
+			}
+
+			const placeholder = document.createElement('div');
+			placeholder.style.display = 'none';
+			placeholder.setAttribute('data-tcf-placeholder', 'true');
+			moveTarget.parentElement.insertBefore(placeholder, moveTarget);
+
+			const host = document.createElement('div');
+			host.setAttribute('data-tcf-body-host', 'true');
+			document.body.appendChild(host);
+			host.appendChild(moveTarget);
+
+			pseudoFullscreenPlaceholder = placeholder;
+			pseudoFullscreenBodyHost = host;
+			pseudoFullscreenMovedContainer = moveTarget;
+		};
+
+		const teardownBodyHostedPseudoFullscreen = () => {
+			if (pseudoFullscreenMovedContainer && pseudoFullscreenPlaceholder?.parentElement) {
+				pseudoFullscreenPlaceholder.parentElement.insertBefore(pseudoFullscreenMovedContainer, pseudoFullscreenPlaceholder);
+			}
+			pseudoFullscreenPlaceholder?.remove();
+			pseudoFullscreenBodyHost?.remove();
+			pseudoFullscreenPlaceholder = null;
+			pseudoFullscreenBodyHost = null;
+			pseudoFullscreenMovedContainer = null;
 		};
 
 		const applyPseudoFullscreenViewport = () => {
@@ -708,6 +786,7 @@
 
 		const setPseudoFullscreenActive = (nextState) => {
 			if (nextState) {
+				ensureBodyHostedPseudoFullscreen();
 				syncPseudoFullscreenRoot();
 				if (!pseudoFullscreenRoot) {
 					return;
@@ -716,12 +795,17 @@
 				pseudoFullscreenSurface?.classList.add(PSEUDO_FULLSCREEN_SURFACE_CLASS);
 				pseudoFullscreenRoot.classList.add(PSEUDO_FULLSCREEN_CLASS);
 				applyPseudoFullscreenViewport();
+				core?.onSettingsChange?.(settings);
+				window.dispatchEvent(new Event('resize'));
 			} else {
 				pseudoFullscreenActive = false;
 				pseudoFullscreenSurface?.classList.remove(PSEUDO_FULLSCREEN_SURFACE_CLASS);
 				pseudoFullscreenRoot?.classList.remove(PSEUDO_FULLSCREEN_CLASS);
 				clearPseudoFullscreenViewport(pseudoFullscreenSurface);
 				clearPseudoFullscreenViewport(pseudoFullscreenRoot);
+				teardownBodyHostedPseudoFullscreen();
+				core?.onSettingsChange?.(settings);
+				window.dispatchEvent(new Event('resize'));
 			}
 		};
 
@@ -759,7 +843,7 @@
 		};
 
 		const ensureFullscreenButtonInterceptor = () => {
-			if (isDesktopTwitchLayout()) {
+			if (!shouldHijackFullscreenButton()) {
 				unbindFullscreenButtonInterceptor();
 				if (pseudoFullscreenActive) {
 					setPseudoFullscreenActive(false);

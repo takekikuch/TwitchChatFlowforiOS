@@ -75,6 +75,8 @@
   position: fixed !important;
   top: var(--tcf-viewport-top, 0px) !important;
   left: var(--tcf-viewport-left, 0px) !important;
+  right: auto !important;
+  bottom: auto !important;
   width: var(--tcf-viewport-width, 100vw) !important;
   height: var(--tcf-viewport-height, 100vh) !important;
   z-index: 2147483646 !important;
@@ -94,6 +96,8 @@
   position: fixed !important;
   top: var(--tcf-viewport-top, 0px) !important;
   left: var(--tcf-viewport-left, 0px) !important;
+  right: auto !important;
+  bottom: auto !important;
   width: var(--tcf-viewport-width, 100vw) !important;
   height: var(--tcf-viewport-height, 100vh) !important;
   z-index: 2147483645 !important;
@@ -138,6 +142,14 @@
   z-index: 10001 !important;
 }
 
+.tcf-pseudo-fullscreen-surface #danmaku-container {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 10001 !important;
+}
+
 .tcf-pseudo-fullscreen .player-controls {
   position: absolute !important;
   left: 0 !important;
@@ -155,5 +167,9 @@
 }
 
 .tcf-pseudo-fullscreen #danmaku-container[data-danmaku-mode=default] .danmaku-chat .danmaku-message {
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, var(--shadowOpacity, 0.8)), -2px -2px 2px rgba(0, 0, 0, var(--shadowOpacity, 0.8));
+}
+
+.tcf-pseudo-fullscreen-surface #danmaku-container[data-danmaku-mode=default] .danmaku-chat .danmaku-message {
   text-shadow: 2px 2px 6px rgba(0, 0, 0, var(--shadowOpacity, 0.8)), -2px -2px 2px rgba(0, 0, 0, var(--shadowOpacity, 0.8));
 }

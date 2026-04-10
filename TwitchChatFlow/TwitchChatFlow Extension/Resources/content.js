@@ -360,11 +360,14 @@
 	
 };;
 	
-	const VIDEO_CONTAINER_SELECTORS = [
-		'[data-test-selector="video-player__container"]',
-		'.video-player__container',
-		'[data-a-target="player-overlay-click-handler"]'
-	];
+		const VIDEO_CONTAINER_SELECTORS = [
+			'[data-test-selector="video-player__video-container"]',
+			'[data-test-selector="video-player__container"]',
+			'.video-player__container',
+			'[data-a-target="video-ref"]',
+			'.video-ref',
+			'[data-a-target="player-overlay-click-handler"]'
+		];
 	const CHAT_CONTAINER_SELECTORS = [
 		'[data-test-selector="chat-scrollable-area__message-container"]',
 		'.chat-scrollable-area__message-container',
@@ -385,12 +388,14 @@
 		'button[aria-label*="Fullscreen"]',
 		'button[aria-label*="全画面"]'
 	];
-	const VIDEO_SURFACE_SELECTORS = [
-		'[data-a-target="video-player"]',
-		'.video-player',
-		'.video-player__container',
-		'.playerContainerMWeb--WuAj6'
-	];
+		const VIDEO_SURFACE_SELECTORS = [
+			'[data-a-target="video-player"]',
+			'.video-player',
+			'.video-player__container',
+			'.playerContainerMWeb--WuAj6',
+			'[data-a-target="video-ref"]',
+			'.video-ref'
+		];
 	const PSEUDO_FULLSCREEN_CLASS = 'tcf-pseudo-fullscreen';
 	const PSEUDO_FULLSCREEN_SURFACE_CLASS = 'tcf-pseudo-fullscreen-surface';
 	const PSEUDO_FULLSCREEN_OBSERVER_SELECTORS = [
@@ -453,8 +458,8 @@
 		}
 	});
 
-	const getElementsBySelectors = (selectors, $parent) => {
-		let fulfilled;
+		const getElementsBySelectors = (selectors, $parent) => {
+			let fulfilled;
 		return Promise.race(
 			selectors.map(selector => waitUntil(() => {
 				if (fulfilled) {
@@ -468,19 +473,26 @@
 					return false;
 				}
 			}))
-		);
-	};
+			);
+		};
 
-	const getVideoContainer = () => {
-		return getElementsBySelectors(VIDEO_CONTAINER_SELECTORS).then($els => {
-			return $els[0];
-		});
-	};
-	const getChatContainer = () => {
-		return getElementsBySelectors(CHAT_CONTAINER_SELECTORS).then($els => {
-			return $els[0];
-		});
-	};
+		const findFirstElementBySelectors = (selectors, $parent) => {
+			const searchRoot = $parent || document;
+			for (const selector of selectors) {
+				const $el = searchRoot.querySelector(selector);
+				if ($el) {
+					return $el;
+				}
+			}
+			return null;
+		};
+
+		const getVideoContainer = () => {
+			return waitUntil(() => findFirstElementBySelectors(VIDEO_CONTAINER_SELECTORS), { timeout: 15000 });
+		};
+		const getChatContainer = () => {
+			return waitUntil(() => findFirstElementBySelectors(CHAT_CONTAINER_SELECTORS), { timeout: 15000 });
+		};
 
 	(async () => {
 		let $video, $chat, $danmakuContainer;
@@ -577,22 +589,33 @@
 		let pseudoFullscreenObserverRoot = null;
 		let pseudoFullscreenRetryTimers = [];
 		let fullscreenVideo = null;
+		let fullscreenButtonBound = null;
 		let pseudoFullscreenSurface = null;
 		let pseudoFullscreenToggleStamp = 0;
 
 		const getViewportMetrics = () => {
 			const viewport = window.visualViewport;
+			const layoutWidth = Math.round(window.innerWidth || document.documentElement.clientWidth || 0);
+			const layoutHeight = Math.round(window.innerHeight || document.documentElement.clientHeight || 0);
+			const top = Math.max(0, Math.round(viewport?.offsetTop || 0));
+			const left = Math.max(0, Math.round(viewport?.offsetLeft || 0));
+			const rawWidth = Math.round(viewport?.width || layoutWidth || 0);
+			const rawHeight = Math.round(viewport?.height || layoutHeight || 0);
 			return {
-				width: Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 0),
-				height: Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0),
-				top: Math.round(viewport?.offsetTop || 0),
-				left: Math.round(viewport?.offsetLeft || 0)
+				width: Math.max(0, Math.min(rawWidth, Math.max(0, layoutWidth - left) || rawWidth)),
+				height: Math.max(0, Math.min(rawHeight, Math.max(0, layoutHeight - top) || rawHeight)),
+				top,
+				left
 			};
 		};
 
 		const getFullscreenButton = () => {
 			const searchRoot = $video && document.body.contains($video) ? $video.closest(PLAYER_ROOT_SELECTORS.join(',')) || document : document;
 			return searchRoot.querySelector(FULLSCREEN_BUTTON_SELECTORS.join(',')) || document.querySelector(FULLSCREEN_BUTTON_SELECTORS.join(','));
+		};
+
+		const isDesktopTwitchLayout = () => {
+			return Boolean(document.querySelector('.persistent-player')) && !Boolean(document.querySelector('[class*="toggleControls--"]'));
 		};
 
 		const findPseudoFullscreenContainerFrom = (startElement) => {
@@ -707,36 +730,59 @@
 			pseudoFullscreenRetryTimers = [];
 		};
 
-		const ensureFullscreenButtonInterceptor = () => {
-			const fullscreenButton = getFullscreenButton();
-			if (!fullscreenButton) {
-				return;
-			}
-
-			const interceptFullscreen = (event) => {
-				const now = Date.now();
-				if (now - pseudoFullscreenToggleStamp < 250) {
-					event.preventDefault();
-					event.stopPropagation();
-					event.stopImmediatePropagation?.();
-					return;
-				}
-
-				pseudoFullscreenToggleStamp = now;
+		const interceptFullscreen = (event) => {
+			const now = Date.now();
+			if (now - pseudoFullscreenToggleStamp < 250) {
 				event.preventDefault();
 				event.stopPropagation();
 				event.stopImmediatePropagation?.();
-				setPseudoFullscreenActive(!pseudoFullscreenActive);
-			};
-
-			if (fullscreenButton.dataset.tcfPseudoBound === 'true') {
 				return;
 			}
 
+			pseudoFullscreenToggleStamp = now;
+			event.preventDefault();
+			event.stopPropagation();
+			event.stopImmediatePropagation?.();
+			setPseudoFullscreenActive(!pseudoFullscreenActive);
+		};
+
+		const unbindFullscreenButtonInterceptor = () => {
+			if (!fullscreenButtonBound) {
+				return;
+			}
+
+			fullscreenButtonBound.removeEventListener('touchend', interceptFullscreen, true);
+			fullscreenButtonBound.removeEventListener('pointerup', interceptFullscreen, true);
+			fullscreenButtonBound.removeEventListener('click', interceptFullscreen, true);
+			delete fullscreenButtonBound.dataset.tcfPseudoBound;
+			fullscreenButtonBound = null;
+		};
+
+		const ensureFullscreenButtonInterceptor = () => {
+			if (isDesktopTwitchLayout()) {
+				unbindFullscreenButtonInterceptor();
+				if (pseudoFullscreenActive) {
+					setPseudoFullscreenActive(false);
+				}
+				return;
+			}
+
+			const fullscreenButton = getFullscreenButton();
+			if (!fullscreenButton) {
+				unbindFullscreenButtonInterceptor();
+				return;
+			}
+
+			if (fullscreenButtonBound === fullscreenButton && fullscreenButton.dataset.tcfPseudoBound === 'true') {
+				return;
+			}
+
+			unbindFullscreenButtonInterceptor();
 			fullscreenButton.dataset.tcfPseudoBound = 'true';
 			fullscreenButton.addEventListener('touchend', interceptFullscreen, true);
 			fullscreenButton.addEventListener('pointerup', interceptFullscreen, true);
 			fullscreenButton.addEventListener('click', interceptFullscreen, true);
+			fullscreenButtonBound = fullscreenButton;
 		};
 
 		const scheduleEnsureFullscreenButtonInterceptor = (delays = [0, 120, 280, 520, 900]) => {

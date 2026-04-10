@@ -388,16 +388,22 @@
 		'button[aria-label*="Fullscreen"]',
 		'button[aria-label*="全画面"]'
 	];
-		const VIDEO_SURFACE_SELECTORS = [
-			'[data-a-target="video-player"]',
-			'.video-player',
-			'.video-player__container',
-			'.playerContainerMWeb--WuAj6',
-			'[data-a-target="video-ref"]',
-			'.video-ref'
-		];
+	const VIDEO_SURFACE_SELECTORS = [
+		'[data-a-target="video-player"]',
+		'.video-player',
+		'.video-player__container',
+		'.playerContainerMWeb--WuAj6',
+		'[data-a-target="video-ref"]',
+		'.video-ref'
+	];
 	const PSEUDO_FULLSCREEN_CLASS = 'tcf-pseudo-fullscreen';
 	const PSEUDO_FULLSCREEN_SURFACE_CLASS = 'tcf-pseudo-fullscreen-surface';
+	const PSEUDO_FULLSCREEN_DESKTOP_CLASS = 'tcf-pseudo-fullscreen-desktop';
+	const PSEUDO_FULLSCREEN_PAGE_LOCK_CLASS = 'tcf-pseudo-fullscreen-page-lock';
+	const DESKTOP_PHONE_PSEUDO_ROOT_SELECTORS = [
+		'.persistent-player',
+		'[data-a-player-state]'
+	];
 	const PSEUDO_FULLSCREEN_OBSERVER_SELECTORS = [
 		'.player-controls',
 		'.player-controls__right-control-group',
@@ -496,6 +502,8 @@
 
 	(async () => {
 		let $video, $chat, $danmakuContainer;
+		let danmakuContainerOriginalParent = null;
+		let danmakuContainerOriginalNextSibling = null;
 		
 		const loadSettings = async () => {
 			try {
@@ -590,9 +598,6 @@
 		let pseudoFullscreenRetryTimers = [];
 		let fullscreenVideo = null;
 		let fullscreenButtonBound = null;
-		let pseudoFullscreenBodyHost = null;
-		let pseudoFullscreenPlaceholder = null;
-		let pseudoFullscreenMovedContainer = null;
 		let pseudoFullscreenSurface = null;
 		let pseudoFullscreenToggleStamp = 0;
 
@@ -638,8 +643,17 @@
 			return !isDesktopTwitchLayout() || isPhoneSizedDevice();
 		};
 
-		const shouldUseBodyHostedPseudoFullscreen = () => {
+		const shouldUseDesktopPhonePseudoFullscreen = () => {
 			return isDesktopTwitchLayout() && isPhoneSizedDevice();
+		};
+
+		const getDesktopPhonePseudoFullscreenRoot = () => {
+			const selectors = DESKTOP_PHONE_PSEUDO_ROOT_SELECTORS.join(',');
+			const fullscreenButton = getFullscreenButton();
+			return fullscreenButton?.closest(selectors)
+				|| $video?.closest?.(selectors)
+				|| document.querySelector(selectors)
+				|| null;
 		};
 
 		const findPseudoFullscreenContainerFrom = (startElement) => {
@@ -655,8 +669,12 @@
 		};
 
 		const getPseudoFullscreenRoot = () => {
-			if (shouldUseBodyHostedPseudoFullscreen() && pseudoFullscreenBodyHost) {
-				return pseudoFullscreenBodyHost;
+			if (shouldUseDesktopPhonePseudoFullscreen()) {
+				return getDesktopPhonePseudoFullscreenRoot()
+					|| getFullscreenButton()?.closest('[data-test-selector="video-player__video-container"], .video-player__container')
+					|| $video?.closest?.('[data-test-selector="video-player__video-container"], .video-player__container')
+					|| document.querySelector('[data-test-selector="video-player__video-container"], .video-player__container')
+					|| null;
 			}
 
 			const fullscreenButton = getFullscreenButton();
@@ -670,12 +688,11 @@
 		};
 
 		const getPseudoFullscreenSurface = () => {
-			if (shouldUseBodyHostedPseudoFullscreen()) {
-				const moved = pseudoFullscreenMovedContainer
-					|| findPseudoFullscreenContainerFrom(getFullscreenButton())
-					|| findPseudoFullscreenContainerFrom($video);
-				return moved?.querySelector('[data-a-target="video-ref"], .video-ref')
-					|| moved?.querySelector(VIDEO_SURFACE_SELECTORS.join(','))
+			if (shouldUseDesktopPhonePseudoFullscreen()) {
+				const root = getPseudoFullscreenRoot();
+				return root?.querySelector('[data-a-target="video-ref"], .video-ref')
+					|| root?.querySelector('[data-test-selector="video-player__video-container"], .video-player__container')
+					|| root?.querySelector(VIDEO_SURFACE_SELECTORS.join(','))
 					|| null;
 			}
 
@@ -699,45 +716,49 @@
 			element.style.removeProperty('--tcf-viewport-left');
 		};
 
-		const ensureBodyHostedPseudoFullscreen = () => {
-			if (!shouldUseBodyHostedPseudoFullscreen()) {
-				return;
+		const getDanmakuContainerHost = () => {
+			if (pseudoFullscreenActive && pseudoFullscreenRoot && document.body.contains(pseudoFullscreenRoot)) {
+				return pseudoFullscreenRoot;
 			}
-			if (pseudoFullscreenBodyHost && pseudoFullscreenMovedContainer) {
-				return;
-			}
-
-			const moveTarget = findPseudoFullscreenContainerFrom(getFullscreenButton())
-				|| findPseudoFullscreenContainerFrom($video)
-				|| document.querySelector('[data-test-selector="video-player__video-container"], .video-player__container');
-			if (!moveTarget?.parentElement) {
-				return;
-			}
-
-			const placeholder = document.createElement('div');
-			placeholder.style.display = 'none';
-			placeholder.setAttribute('data-tcf-placeholder', 'true');
-			moveTarget.parentElement.insertBefore(placeholder, moveTarget);
-
-			const host = document.createElement('div');
-			host.setAttribute('data-tcf-body-host', 'true');
-			document.body.appendChild(host);
-			host.appendChild(moveTarget);
-
-			pseudoFullscreenPlaceholder = placeholder;
-			pseudoFullscreenBodyHost = host;
-			pseudoFullscreenMovedContainer = moveTarget;
+			return $video && document.body.contains($video) ? $video : null;
 		};
 
-		const teardownBodyHostedPseudoFullscreen = () => {
-			if (pseudoFullscreenMovedContainer && pseudoFullscreenPlaceholder?.parentElement) {
-				pseudoFullscreenPlaceholder.parentElement.insertBefore(pseudoFullscreenMovedContainer, pseudoFullscreenPlaceholder);
+		const syncDanmakuContainerHost = () => {
+			if (!$danmakuContainer || !document.body.contains($danmakuContainer)) {
+				return;
 			}
-			pseudoFullscreenPlaceholder?.remove();
-			pseudoFullscreenBodyHost?.remove();
-			pseudoFullscreenPlaceholder = null;
-			pseudoFullscreenBodyHost = null;
-			pseudoFullscreenMovedContainer = null;
+
+			const nextHost = getDanmakuContainerHost();
+			if (!nextHost || $danmakuContainer.parentElement === nextHost) {
+				return;
+			}
+
+			if (pseudoFullscreenActive) {
+				if (!$danmakuContainer.dataset.tcfOriginalParentCaptured) {
+					danmakuContainerOriginalParent = $danmakuContainer.parentElement;
+					danmakuContainerOriginalNextSibling = $danmakuContainer.nextSibling;
+					$danmakuContainer.dataset.tcfOriginalParentCaptured = 'true';
+				}
+				nextHost.appendChild($danmakuContainer);
+				return;
+			}
+
+			delete $danmakuContainer.dataset.tcfOriginalParentCaptured;
+			if (danmakuContainerOriginalParent && document.body.contains(danmakuContainerOriginalParent)) {
+				if (danmakuContainerOriginalNextSibling && danmakuContainerOriginalParent.contains(danmakuContainerOriginalNextSibling)) {
+					danmakuContainerOriginalParent.insertBefore($danmakuContainer, danmakuContainerOriginalNextSibling);
+				} else {
+					danmakuContainerOriginalParent.appendChild($danmakuContainer);
+				}
+			} else {
+				nextHost.appendChild($danmakuContainer);
+			}
+		};
+
+		const syncPseudoFullscreenPageLock = () => {
+			const shouldLockPage = pseudoFullscreenActive && shouldUseDesktopPhonePseudoFullscreen();
+			document.body?.classList.toggle(PSEUDO_FULLSCREEN_PAGE_LOCK_CLASS, shouldLockPage);
+			document.documentElement?.classList.toggle(PSEUDO_FULLSCREEN_PAGE_LOCK_CLASS, shouldLockPage);
 		};
 
 		const applyPseudoFullscreenViewport = () => {
@@ -766,6 +787,7 @@
 
 			if (pseudoFullscreenRoot && pseudoFullscreenRoot !== nextRoot) {
 				pseudoFullscreenRoot.classList.remove(PSEUDO_FULLSCREEN_CLASS);
+				pseudoFullscreenRoot.classList.remove(PSEUDO_FULLSCREEN_DESKTOP_CLASS);
 				clearPseudoFullscreenViewport(pseudoFullscreenRoot);
 			}
 			if (pseudoFullscreenSurface && pseudoFullscreenSurface !== nextSurface) {
@@ -776,17 +798,20 @@
 			pseudoFullscreenRoot = nextRoot;
 			pseudoFullscreenSurface = nextSurface;
 			if (!pseudoFullscreenActive) {
+				syncPseudoFullscreenPageLock();
 				return;
 			}
 
 			pseudoFullscreenSurface?.classList.add(PSEUDO_FULLSCREEN_SURFACE_CLASS);
 			pseudoFullscreenRoot.classList.add(PSEUDO_FULLSCREEN_CLASS);
+			pseudoFullscreenRoot.classList.toggle(PSEUDO_FULLSCREEN_DESKTOP_CLASS, shouldUseDesktopPhonePseudoFullscreen());
 			applyPseudoFullscreenViewport();
+			syncDanmakuContainerHost();
+			syncPseudoFullscreenPageLock();
 		};
 
 		const setPseudoFullscreenActive = (nextState) => {
 			if (nextState) {
-				ensureBodyHostedPseudoFullscreen();
 				syncPseudoFullscreenRoot();
 				if (!pseudoFullscreenRoot) {
 					return;
@@ -794,16 +819,21 @@
 				pseudoFullscreenActive = true;
 				pseudoFullscreenSurface?.classList.add(PSEUDO_FULLSCREEN_SURFACE_CLASS);
 				pseudoFullscreenRoot.classList.add(PSEUDO_FULLSCREEN_CLASS);
+				pseudoFullscreenRoot.classList.toggle(PSEUDO_FULLSCREEN_DESKTOP_CLASS, shouldUseDesktopPhonePseudoFullscreen());
 				applyPseudoFullscreenViewport();
+				syncDanmakuContainerHost();
+				syncPseudoFullscreenPageLock();
 				core?.onSettingsChange?.(settings);
 				window.dispatchEvent(new Event('resize'));
 			} else {
 				pseudoFullscreenActive = false;
 				pseudoFullscreenSurface?.classList.remove(PSEUDO_FULLSCREEN_SURFACE_CLASS);
 				pseudoFullscreenRoot?.classList.remove(PSEUDO_FULLSCREEN_CLASS);
+				pseudoFullscreenRoot?.classList.remove(PSEUDO_FULLSCREEN_DESKTOP_CLASS);
 				clearPseudoFullscreenViewport(pseudoFullscreenSurface);
 				clearPseudoFullscreenViewport(pseudoFullscreenRoot);
-				teardownBodyHostedPseudoFullscreen();
+				syncDanmakuContainerHost();
+				syncPseudoFullscreenPageLock();
 				core?.onSettingsChange?.(settings);
 				window.dispatchEvent(new Event('resize'));
 			}
@@ -1008,6 +1038,8 @@
 			$danmakuContainer = document.createElement('div');
 			$danmakuContainer.setAttribute('id', 'danmaku-container');
 			$danmakuContainer.setAttribute('data-danmaku-mode', settings.mode);
+			danmakuContainerOriginalParent = $video;
+			danmakuContainerOriginalNextSibling = null;
 			$video.appendChild($danmakuContainer);
 			
 			
@@ -1018,6 +1050,7 @@
 			ensureFullscreenButtonInterceptor();
 			scheduleEnsureFullscreenButtonInterceptor([0, 180, 420, 760]);
 			syncPseudoFullscreenRoot();
+			syncDanmakuContainerHost();
 
 			(async () => {
 				let $orgContainer = $danmakuContainer;

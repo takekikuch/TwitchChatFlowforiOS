@@ -128,10 +128,101 @@
   height: 100% !important;
 }
 
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-ref,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player__default-player,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player__overlay {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop {
+  overflow: hidden !important;
+}
+
+html.tcf-pseudo-fullscreen-page-lock,
+body.tcf-pseudo-fullscreen-page-lock {
+  overflow: hidden !important;
+}
+
+body.tcf-pseudo-fullscreen-page-lock .top-nav,
+body.tcf-pseudo-fullscreen-page-lock .side-nav,
+body.tcf-pseudo-fullscreen-page-lock .side-nav__overlay-wrapper,
+body.tcf-pseudo-fullscreen-page-lock .channel-root__info,
+body.tcf-pseudo-fullscreen-page-lock .navigation {
+  display: none !important;
+}
+
+body.tcf-pseudo-fullscreen-page-lock .channel-root__right-column,
+body.tcf-pseudo-fullscreen-page-lock .right-column {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  flex: 0 0 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.tcf-pseudo-fullscreen-page-lock .chat-shell {
+  position: absolute !important;
+  top: 0 !important;
+  left: -10000px !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.tcf-pseudo-fullscreen-page-lock .channel-root__main--with-chat,
+body.tcf-pseudo-fullscreen-page-lock .channel-root__player--with-chat,
+body.tcf-pseudo-fullscreen-page-lock .channel-root__player,
+body.tcf-pseudo-fullscreen-page-lock .persistent-player {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 100% !important;
+}
+
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop.tw-aspect,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .tw-aspect,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop [data-test-selector="video-player__video-layout"],
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop [data-test-selector="video-player__video-container"],
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player__container,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop [data-a-target="video-ref"],
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-ref {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop.tw-aspect,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .tw-aspect {
+  padding-bottom: 0 !important;
+}
+
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop [data-test-selector="video-player__video-layout"],
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop [data-test-selector="video-player__video-container"],
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player__container {
+  position: relative !important;
+  inset: auto !important;
+  overflow: visible !important;
+}
+
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player__default-player,
+.tcf-pseudo-fullscreen.tcf-pseudo-fullscreen-desktop .video-player__overlay {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
 .tcf-pseudo-fullscreen-surface [data-a-target="video-player"],
 .tcf-pseudo-fullscreen-surface .playerContainerMWeb--WuAj6,
 .tcf-pseudo-fullscreen-surface .video-ref--BLEPn,
-.tcf-pseudo-fullscreen-surface .video-ref--BLEPn video {
+.tcf-pseudo-fullscreen-surface .video-ref--BLEPn video,
+.tcf-pseudo-fullscreen-surface .video-ref,
+.tcf-pseudo-fullscreen-surface .video-ref video {
   width: 100% !important;
   height: 100% !important;
 }
